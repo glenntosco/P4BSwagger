@@ -67,16 +67,6 @@
         "responses": { "200": { "description": "Tax ID verification result" } }
       }
     },
-    "/api/Customer/ExportToExcel": {
-      "get": {
-        "tags": ["Customer"],
-        "summary": "Export customers to Excel (Admin only)",
-        "operationId": "Customer_ExportToExcel",
-        "responses": {
-          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
-        }
-      }
-    },
     "/api/Customer/ImportFromExcel": {
       "post": {
         "tags": ["Customer"],
