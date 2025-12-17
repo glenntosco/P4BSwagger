@@ -28,8 +28,7 @@
     { "name": "VendorBill", "description": "Vendor bills" },
     { "name": "InventoryReceipt", "description": "Inventory receipts" },
     { "name": "JournalEntry", "description": "GL journal entries" },
-    { "name": "PrintReport", "description": "Report generation" },
-    { "name": "Dashboard", "description": "Dashboard widgets" }
+    { "name": "PrintReport", "description": "Report generation" }
   ],
   "paths": {
     "/api/Customer/GetById": {
@@ -169,17 +168,6 @@
         "responses": { "200": { "description": "Image deleted" } }
       }
     },
-    "/api/Product/Discontinue": {
-      "get": {
-        "tags": ["Product"],
-        "summary": "Discontinue a product",
-        "operationId": "Product_Discontinue",
-        "parameters": [
-          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
-        ],
-        "responses": { "200": { "description": "Product discontinued" } }
-      }
-    },
     "/api/Warehouse/GetById": {
       "get": {
         "tags": ["Warehouse"],
@@ -288,35 +276,6 @@
         "responses": { "200": { "description": "Sales order created/updated" } }
       }
     },
-    "/api/SalesOrder/Clone": {
-      "get": {
-        "tags": ["SalesOrder"],
-        "summary": "Clone a sales order",
-        "operationId": "SalesOrder_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Order ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned sales order" } }
-      }
-    },
-    "/api/SalesOrder/Lock": {
-      "post": {
-        "tags": ["SalesOrder"],
-        "summary": "Lock sales orders",
-        "operationId": "SalesOrder_Lock",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Sales orders locked" } }
-      }
-    },
-    "/api/SalesOrder/ToDraft": {
-      "post": {
-        "tags": ["SalesOrder"],
-        "summary": "Return locked orders to draft",
-        "operationId": "SalesOrder_ToDraft",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Sales orders returned to draft" } }
-      }
-    },
     "/api/Invoice/GetById": {
       "get": {
         "tags": ["Invoice"],
@@ -339,44 +298,6 @@
         "responses": { "200": { "description": "Invoice created/updated" } }
       }
     },
-    "/api/Invoice/Clone": {
-      "get": {
-        "tags": ["Invoice"],
-        "summary": "Clone an invoice",
-        "operationId": "Invoice_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Invoice ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned invoice" } }
-      }
-    },
-    "/api/Invoice/Lock": {
-      "post": {
-        "tags": ["Invoice"],
-        "summary": "Lock invoices to finalize",
-        "operationId": "Invoice_Lock",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Invoices locked" } }
-      }
-    },
-    "/api/Invoice/Post": {
-      "post": {
-        "tags": ["Invoice"],
-        "summary": "Post invoices to general ledger",
-        "operationId": "Invoice_Post",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Invoices posted successfully" } }
-      }
-    },
-    "/api/Invoice/Void": {
-      "post": {
-        "tags": ["Invoice"],
-        "summary": "Void invoices",
-        "operationId": "Invoice_Void",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Invoices voided" } }
-      }
-    },
     "/api/InventoryDelivery/GetById": {
       "get": {
         "tags": ["InventoryDelivery"],
@@ -397,38 +318,6 @@
         "operationId": "InventoryDelivery_CreateOrUpdate",
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryDelivery" } } } },
         "responses": { "200": { "description": "Inventory delivery created/updated" } }
-      }
-    },
-    "/api/InventoryDelivery/Clone": {
-      "get": {
-        "tags": ["InventoryDelivery"],
-        "summary": "Clone an inventory delivery",
-        "operationId": "InventoryDelivery_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Delivery ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned delivery" } }
-      }
-    },
-    "/api/InventoryDelivery/GenerateInvoice": {
-      "get": {
-        "tags": ["InventoryDelivery"],
-        "summary": "Generate invoice from delivery",
-        "operationId": "InventoryDelivery_GenerateInvoice",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Delivery ID" },
-          { "name": "comments", "in": "query", "schema": { "type": "string" }, "description": "Invoice comments" }
-        ],
-        "responses": { "200": { "description": "Generated invoice ID" } }
-      }
-    },
-    "/api/InventoryDelivery/Ship": {
-      "post": {
-        "tags": ["InventoryDelivery"],
-        "summary": "Mark deliveries as shipped",
-        "operationId": "InventoryDelivery_Ship",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Deliveries marked as shipped" } }
       }
     },
     "/api/PurchaseOrder/GetById": {
@@ -486,44 +375,6 @@
         "responses": { "200": { "description": "Vendor bill created/updated" } }
       }
     },
-    "/api/VendorBill/Clone": {
-      "get": {
-        "tags": ["VendorBill"],
-        "summary": "Clone a vendor bill",
-        "operationId": "VendorBill_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor Bill ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned vendor bill" } }
-      }
-    },
-    "/api/VendorBill/Lock": {
-      "post": {
-        "tags": ["VendorBill"],
-        "summary": "Lock vendor bills",
-        "operationId": "VendorBill_Lock",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Vendor bills locked" } }
-      }
-    },
-    "/api/VendorBill/Post": {
-      "post": {
-        "tags": ["VendorBill"],
-        "summary": "Post vendor bills to general ledger",
-        "operationId": "VendorBill_Post",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Vendor bills posted" } }
-      }
-    },
-    "/api/VendorBill/Void": {
-      "post": {
-        "tags": ["VendorBill"],
-        "summary": "Void vendor bills",
-        "operationId": "VendorBill_Void",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Vendor bills voided" } }
-      }
-    },
     "/api/InventoryReceipt/GetById": {
       "get": {
         "tags": ["InventoryReceipt"],
@@ -546,17 +397,6 @@
         "responses": { "200": { "description": "Inventory receipt created/updated" } }
       }
     },
-    "/api/InventoryReceipt/Clone": {
-      "get": {
-        "tags": ["InventoryReceipt"],
-        "summary": "Clone an inventory receipt",
-        "operationId": "InventoryReceipt_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Receipt ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned receipt" } }
-      }
-    },
     "/api/InventoryReceipt/GenerateBill": {
       "get": {
         "tags": ["InventoryReceipt"],
@@ -566,15 +406,6 @@
           { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Receipt ID" }
         ],
         "responses": { "200": { "description": "Generated vendor bill ID" } }
-      }
-    },
-    "/api/InventoryReceipt/Receive": {
-      "post": {
-        "tags": ["InventoryReceipt"],
-        "summary": "Mark receipts as received",
-        "operationId": "InventoryReceipt_Receive",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Receipts marked as received" } }
       }
     },
     "/api/JournalEntry/GetById": {
@@ -597,37 +428,6 @@
         "operationId": "JournalEntry_CreateOrUpdate",
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } },
         "responses": { "200": { "description": "Journal entry created/updated" } }
-      }
-    },
-    "/api/JournalEntry/Clone": {
-      "get": {
-        "tags": ["JournalEntry"],
-        "summary": "Clone a journal entry",
-        "operationId": "JournalEntry_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Journal Entry ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned journal entry" } }
-      }
-    },
-    "/api/JournalEntry/PostBatch": {
-      "post": {
-        "tags": ["JournalEntry"],
-        "summary": "Post multiple journal entries",
-        "operationId": "JournalEntry_PostBatch",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Journal entries posted" } }
-      }
-    },
-    "/api/JournalEntry/GetByRefId": {
-      "get": {
-        "tags": ["JournalEntry"],
-        "summary": "Get journal entry by reference ID",
-        "operationId": "JournalEntry_GetByRefId",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Reference document ID" }
-        ],
-        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } } }
       }
     },
     "/api/PrintReport/GetById": {
@@ -670,68 +470,6 @@
           { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Report ID" }
         ],
         "responses": { "200": { "description": "Report template data" } }
-      }
-    },
-    "/api/Dashboard/GetById": {
-      "get": {
-        "tags": ["Dashboard"],
-        "summary": "Get dashboard by ID",
-        "operationId": "Dashboard_GetById",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" },
-          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
-          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
-        ],
-        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Dashboard" } } } } }
-      }
-    },
-    "/api/Dashboard/CreateOrUpdate": {
-      "post": {
-        "tags": ["Dashboard"],
-        "summary": "Create or update a dashboard",
-        "operationId": "Dashboard_CreateOrUpdate",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Dashboard" } } } },
-        "responses": { "200": { "description": "Dashboard created/updated" } }
-      }
-    },
-    "/api/Dashboard/DeleteBatch": {
-      "post": {
-        "tags": ["Dashboard"],
-        "summary": "Delete multiple dashboards",
-        "operationId": "Dashboard_DeleteBatch",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Dashboards deleted" } }
-      }
-    },
-    "/api/Dashboard/GetDashboardById": {
-      "get": {
-        "tags": ["Dashboard"],
-        "summary": "Get dashboard with full panel details",
-        "operationId": "Dashboard_GetDashboardById",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" }
-        ],
-        "responses": { "200": { "description": "Dashboard with panels" } }
-      }
-    },
-    "/api/Dashboard/ExportDashboard": {
-      "get": {
-        "tags": ["Dashboard"],
-        "summary": "Export dashboard to JSON",
-        "operationId": "Dashboard_ExportDashboard",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" }
-        ],
-        "responses": { "200": { "description": "Dashboard JSON export" } }
-      }
-    },
-    "/api/Dashboard/ImportDashboard": {
-      "post": {
-        "tags": ["Dashboard"],
-        "summary": "Import dashboard from JSON file",
-        "operationId": "Dashboard_ImportDashboard",
-        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
-        "responses": { "200": { "description": "Dashboard imported" } }
       }
     }
   },
@@ -1065,19 +803,6 @@
               "Name": { "type": "string" },
               "Description": { "type": "string" },
               "EntityType": { "type": "string" },
-              "IsDefault": { "type": "boolean" }
-            }
-          }
-        ]
-      },
-      "Dashboard": {
-        "allOf": [
-          { "$ref": "#/components/schemas/EntityBase" },
-          {
-            "type": "object",
-            "properties": {
-              "Name": { "type": "string" },
-              "Description": { "type": "string" },
               "IsDefault": { "type": "boolean" }
             }
           }
