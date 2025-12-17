@@ -124,6 +124,8 @@ app.UseSwaggerUI(options =>
             /* Links */
             .swagger-ui a { color: var(--p4-blue); }
             .swagger-ui a:hover { color: var(--p4-blue-dark); }
+            /* Hide Servers section - tenant is determined by API key */
+            .swagger-ui .scheme-container { display: none !important; }
         </style>";
 });
 
