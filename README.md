@@ -1,14 +1,12 @@
 # P4Books API Documentation
 
-Standalone Swagger UI for the P4Books ERP API.
+Standalone Swagger UI for the P4Books ERP API, deployed on Azure Web Apps.
 
 ## Overview
 
 This project provides an interactive API documentation interface for P4Books ERP using Swagger UI (Swashbuckle.AspNetCore 10.0.1).
 
-**Live URLs:**
-- Production: https://api.p4books.cloud
-- Testing: https://api.p4books.local
+**Live URL:** https://api.p4books.cloud
 
 ## Features
 
@@ -24,7 +22,8 @@ This project provides an interactive API documentation interface for P4Books ERP
 
 - .NET 10.0
 - Swashbuckle.AspNetCore 10.0.1
-- IIS (OutOfProcess hosting)
+- Azure Web Apps (Linux)
+- GitHub Actions CI/CD
 
 ## API Endpoints
 
@@ -63,39 +62,19 @@ The API uses two authentication methods:
 
 ## Deployment
 
-### Prerequisites
-- .NET 10.0 SDK
-- IIS with ASP.NET Core Hosting Bundle
+### Automatic Deployment (GitHub Actions)
 
-### Publish
+Push to `main` branch triggers automatic deployment to Azure Web Apps.
 
-```bash
-dotnet publish P4B.Api/P4B.Api.csproj -c Release -o publish
-```
+### Azure Setup
 
-### IIS Configuration
+1. Create Azure Web App with .NET 10.0 runtime
+2. Download the **Publish Profile** from Azure Portal
+3. In GitHub repo → Settings → Secrets → Actions
+4. Add secret `AZURE_WEBAPP_PUBLISH_PROFILE` with the publish profile content
+5. Update `AZURE_WEBAPP_NAME` in `.github/workflows/azure-deploy.yml`
 
-1. Create a new IIS site pointing to the `publish` folder
-2. Add HTTPS bindings for your domains
-3. Assign SSL certificates
-
-## Project Structure
-
-```
-P4B_Api/
-├── P4B.Api/
-│   ├── Program.cs          # Main application with Swagger UI config
-│   ├── openapi.json        # OpenAPI specification
-│   ├── web.config          # IIS configuration
-│   └── P4B.Api.csproj      # Project file
-├── publish/                # Deployment output (gitignored)
-├── .gitignore
-└── README.md
-```
-
-## Development
-
-### Run locally
+### Local Development
 
 ```bash
 cd P4B.Api
@@ -104,9 +83,21 @@ dotnet run
 
 Access Swagger UI at: http://localhost:5000
 
-### Update OpenAPI spec
+## Project Structure
 
-Edit `P4B.Api/openapi.json` to add or modify API endpoints.
+```
+P4B_Api/
+├── .github/
+│   └── workflows/
+│       └── azure-deploy.yml   # CI/CD pipeline
+├── P4B.Api/
+│   ├── Program.cs             # Main application
+│   ├── openapi.json           # OpenAPI specification
+│   ├── appsettings.json       # Configuration
+│   └── P4B.Api.csproj         # Project file
+├── .gitignore
+└── README.md
+```
 
 ## License
 
