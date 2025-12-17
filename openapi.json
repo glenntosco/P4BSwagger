@@ -67,15 +67,6 @@
         "responses": { "200": { "description": "Tax ID verification result" } }
       }
     },
-    "/api/Customer/ImportFromExcel": {
-      "post": {
-        "tags": ["Customer"],
-        "summary": "Import customers from Excel (Admin only)",
-        "operationId": "Customer_ImportFromExcel",
-        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
-        "responses": { "200": { "description": "Import result" } }
-      }
-    },
     "/api/Customer/GetOverdue": {
       "post": {
         "tags": ["Customer"],
@@ -84,38 +75,6 @@
         "responses": {
           "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } }
         }
-      }
-    },
-    "/api/Customer/GetEmailOptions": {
-      "get": {
-        "tags": ["Customer"],
-        "summary": "Get email template options",
-        "operationId": "Customer_GetEmailOptions",
-        "responses": { "200": { "description": "Email template options" } }
-      }
-    },
-    "/api/Customer/Email": {
-      "post": {
-        "tags": ["Customer"],
-        "summary": "Email account statements",
-        "operationId": "Customer_Email",
-        "parameters": [
-          { "name": "emailId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Email template ID" }
-        ],
-        "responses": { "200": { "description": "Emails sent successfully" } }
-      }
-    },
-    "/api/Customer/AssignUser": {
-      "get": {
-        "tags": ["Customer"],
-        "summary": "Assign or unassign user to customer",
-        "operationId": "Customer_AssignUser",
-        "parameters": [
-          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "User ID" },
-          { "name": "customerId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Customer ID" },
-          { "name": "enable", "in": "query", "required": true, "schema": { "type": "boolean" }, "description": "Enable or disable assignment" }
-        ],
-        "responses": { "200": { "description": "Assignment updated" } }
       }
     },
     "/api/Vendor/GetById": {
