@@ -3,28 +3,12 @@
   "info": {
     "title": "P4Books ERP API",
     "version": "1.0.0",
-    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Multi-Tenant Architecture\nP4Books uses tenant-specific subdomains. Before making API calls:\n1. Select your tenant alias in the server dropdown above (e.g., `barrdega.p4books.cloud`)\n2. Enter your API key in the Authorize dialog\n\n### Authentication\nUse the `ApiKey` header with your API key. Your API key must be associated with a user in your tenant's database.",
+    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Authentication\nUse the `ApiKey` header with your API key.",
   },
   "servers": [
     {
-      "url": "https://{tenant}.p4books.cloud",
-      "description": "Tenant API Server",
-      "variables": {
-        "tenant": {
-          "default": "your-tenant",
-          "description": "Enter your tenant alias (the subdomain for your P4Books instance). Use 'app' only for SuperUser authentication."
-        }
-      }
-    },
-    {
-      "url": "https://{tenant}.p4books.com",
-      "description": "Tenant API Server (alternate domain)",
-      "variables": {
-        "tenant": {
-          "default": "your-tenant",
-          "description": "Enter your tenant alias (the subdomain for your P4Books instance)"
-        }
-      }
+      "url": "https://test93.p4books.cloud",
+      "description": "Test Tenant (test93)"
     }
   ],
   "security": [
