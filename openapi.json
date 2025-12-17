@@ -135,18 +135,6 @@
         "responses": { "200": { "description": "Product created/updated" } }
       }
     },
-    "/api/Product/RemoveComponent": {
-      "get": {
-        "tags": ["Product"],
-        "summary": "Remove BOM component",
-        "operationId": "Product_RemoveComponent",
-        "parameters": [
-          { "name": "componentId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Component ID" },
-          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
-        ],
-        "responses": { "200": { "description": "Component removed" } }
-      }
-    },
     "/api/Product/ProductImages": {
       "get": {
         "tags": ["Product"],
@@ -474,24 +462,6 @@
           { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Purchase Order ID to clone" }
         ],
         "responses": { "200": { "description": "Cloned purchase order" } }
-      }
-    },
-    "/api/PurchaseOrder/Lock": {
-      "post": {
-        "tags": ["PurchaseOrder"],
-        "summary": "Lock purchase orders",
-        "operationId": "PurchaseOrder_Lock",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Purchase orders locked" } }
-      }
-    },
-    "/api/PurchaseOrder/ToDraft": {
-      "post": {
-        "tags": ["PurchaseOrder"],
-        "summary": "Return purchase orders to draft",
-        "operationId": "PurchaseOrder_ToDraft",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Purchase orders returned to draft" } }
       }
     },
     "/api/VendorBill/GetById": {
