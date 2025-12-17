@@ -11,8 +11,8 @@
       "description": "Tenant API Server",
       "variables": {
         "tenant": {
-          "default": "test93",
-          "description": "Your tenant alias (e.g., test93, barrdega). Use 'app' only for SuperUser authentication."
+          "default": "your-tenant",
+          "description": "Enter your tenant alias (the subdomain for your P4Books instance). Use 'app' only for SuperUser authentication."
         }
       }
     },
@@ -21,8 +21,8 @@
       "description": "Tenant API Server (alternate domain)",
       "variables": {
         "tenant": {
-          "default": "test93",
-          "description": "Your tenant alias (e.g., test93, barrdega)"
+          "default": "your-tenant",
+          "description": "Enter your tenant alias (the subdomain for your P4Books instance)"
         }
       }
     }
