@@ -38,7 +38,9 @@
         "summary": "Get customer by ID",
         "operationId": "Customer_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Customer ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Customer ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Addresses,TaxCodes,Users,PaymentTerms,FreightTerms,PaymentMethod)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select (e.g., *,Addresses.*,PaymentTerms.Code)" }
         ],
         "responses": {
           "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Customer" } } } }
@@ -153,7 +155,9 @@
         "summary": "Get vendor by ID",
         "operationId": "Vendor_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Vendor" } } } } }
       }
@@ -201,7 +205,9 @@
         "summary": "Get product by ID",
         "operationId": "Product_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } }
       }
@@ -370,7 +376,9 @@
         "summary": "Get warehouse by ID",
         "operationId": "Warehouse_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Warehouse ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Warehouse ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Warehouse" } } } } }
       }
@@ -399,7 +407,9 @@
         "summary": "Get GL account by ID",
         "operationId": "Account_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Account ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Account ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Account" } } } } }
       }
@@ -455,7 +465,9 @@
         "summary": "Get sales quote by ID",
         "operationId": "SalesQuote_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Customer)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesQuote" } } } } }
       }
@@ -535,7 +547,9 @@
         "summary": "Get sales order by ID",
         "operationId": "SalesOrder_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Order ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Order ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Customer)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesOrder" } } } } }
       }
@@ -584,7 +598,9 @@
         "summary": "Get invoice by ID",
         "operationId": "Invoice_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Invoice ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Invoice ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Customer)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Invoice" } } } } }
       }
@@ -642,7 +658,9 @@
         "summary": "Get inventory delivery by ID",
         "operationId": "InventoryDelivery_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Inventory Delivery ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Inventory Delivery ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Customer)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryDelivery" } } } } }
       }
@@ -694,7 +712,9 @@
         "summary": "Get purchase order by ID",
         "operationId": "PurchaseOrder_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Purchase Order ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Purchase Order ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Vendor)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PurchaseOrder" } } } } }
       }
@@ -743,7 +763,9 @@
         "summary": "Get vendor bill by ID",
         "operationId": "VendorBill_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor Bill ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor Bill ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Vendor)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VendorBill" } } } } }
       }
@@ -801,7 +823,9 @@
         "summary": "Get inventory receipt by ID",
         "operationId": "InventoryReceipt_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Inventory Receipt ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Inventory Receipt ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines,Vendor)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryReceipt" } } } } }
       }
@@ -852,7 +876,9 @@
         "summary": "Get journal entry by ID",
         "operationId": "JournalEntry_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Journal Entry ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Journal Entry ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include (e.g., Lines)" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } } }
       }
@@ -903,7 +929,9 @@
         "summary": "Get print report by ID",
         "operationId": "PrintReport_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Print Report ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Print Report ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PrintReport" } } } } }
       }
@@ -943,7 +971,9 @@
         "summary": "Get dashboard by ID",
         "operationId": "Dashboard_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Dashboard" } } } } }
       }
