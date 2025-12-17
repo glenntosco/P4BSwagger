@@ -7,12 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://api.p4books.cloud",
+      "url": "https://app.p4books.cloud",
       "description": "Production API Server"
-    },
-    {
-      "url": "https://api.p4books.local",
-      "description": "Local Development Server"
     }
   ],
   "security": [
@@ -36,33 +32,13 @@
     { "name": "Dashboard", "description": "Dashboard widgets" }
   ],
   "paths": {
-    "/api/Customer/Get": {
-      "get": {
-        "tags": ["Customer"],
-        "summary": "Get all customers",
-        "operationId": "Customer_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" },
-          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
-          { "name": "filter", "in": "query", "schema": { "type": "string" }, "description": "Filter expression" },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" }, "description": "Order by property" },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" }, "description": "Number of records to skip" },
-          { "name": "take", "in": "query", "schema": { "type": "integer" }, "description": "Number of records to take" }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Customer" } } } } }
-        }
-      }
-    },
     "/api/Customer/GetById": {
       "get": {
         "tags": ["Customer"],
         "summary": "Get customer by ID",
         "operationId": "Customer_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Customer ID" }
         ],
         "responses": {
           "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Customer" } } } }
@@ -78,31 +54,97 @@
         "responses": { "200": { "description": "Customer created/updated successfully" } }
       }
     },
-    "/api/Customer/Delete": {
+    "/api/Customer/DeleteBatch": {
       "post": {
         "tags": ["Customer"],
-        "summary": "Delete a customer",
-        "operationId": "Customer_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Customer deleted" } }
+        "summary": "Delete multiple customers",
+        "operationId": "Customer_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Customers deleted successfully" } }
       }
     },
-    "/api/Vendor/Get": {
+    "/api/Customer/VerifyTaxId": {
       "get": {
-        "tags": ["Vendor"],
-        "summary": "Get all vendors",
-        "operationId": "Vendor_Get",
+        "tags": ["Customer"],
+        "summary": "Verify customer's tax ID",
+        "operationId": "Customer_VerifyTaxId",
         "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Customer ID" }
         ],
+        "responses": { "200": { "description": "Tax ID verification result" } }
+      }
+    },
+    "/api/Customer/VerifyTaxIdByCode": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Verify tax ID by code",
+        "operationId": "Customer_VerifyTaxIdByCode",
+        "parameters": [
+          { "name": "code", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Tax ID code" },
+          { "name": "customerType", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Customer type" }
+        ],
+        "responses": { "200": { "description": "Tax ID verification result" } }
+      }
+    },
+    "/api/Customer/ExportToExcel": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Export customers to Excel (Admin only)",
+        "operationId": "Customer_ExportToExcel",
         "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Vendor" } } } } }
+          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
         }
+      }
+    },
+    "/api/Customer/ImportFromExcel": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Import customers from Excel (Admin only)",
+        "operationId": "Customer_ImportFromExcel",
+        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Import result" } }
+      }
+    },
+    "/api/Customer/GetOverdue": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Get overdue customer IDs",
+        "operationId": "Customer_GetOverdue",
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } }
+        }
+      }
+    },
+    "/api/Customer/GetEmailOptions": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get email template options",
+        "operationId": "Customer_GetEmailOptions",
+        "responses": { "200": { "description": "Email template options" } }
+      }
+    },
+    "/api/Customer/Email": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Email account statements",
+        "operationId": "Customer_Email",
+        "parameters": [
+          { "name": "emailId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Email template ID" }
+        ],
+        "responses": { "200": { "description": "Emails sent successfully" } }
+      }
+    },
+    "/api/Customer/AssignUser": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Assign or unassign user to customer",
+        "operationId": "Customer_AssignUser",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "User ID" },
+          { "name": "customerId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Customer ID" },
+          { "name": "enable", "in": "query", "required": true, "schema": { "type": "boolean" }, "description": "Enable or disable assignment" }
+        ],
+        "responses": { "200": { "description": "Assignment updated" } }
       }
     },
     "/api/Vendor/GetById": {
@@ -111,9 +153,7 @@
         "summary": "Get vendor by ID",
         "operationId": "Vendor_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Vendor" } } } } }
       }
@@ -127,31 +167,32 @@
         "responses": { "200": { "description": "Vendor created/updated successfully" } }
       }
     },
-    "/api/Vendor/Delete": {
+    "/api/Vendor/DeleteBatch": {
       "post": {
         "tags": ["Vendor"],
-        "summary": "Delete a vendor",
-        "operationId": "Vendor_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Vendor deleted" } }
+        "summary": "Delete multiple vendors",
+        "operationId": "Vendor_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Vendors deleted successfully" } }
       }
     },
-    "/api/Product/Get": {
+    "/api/Vendor/ExportToExcel": {
       "get": {
-        "tags": ["Product"],
-        "summary": "Get all products",
-        "operationId": "Product_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
+        "tags": ["Vendor"],
+        "summary": "Export vendors to Excel",
+        "operationId": "Vendor_ExportToExcel",
         "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } } } } }
+          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
         }
+      }
+    },
+    "/api/Vendor/ImportFromExcel": {
+      "post": {
+        "tags": ["Vendor"],
+        "summary": "Import vendors from Excel",
+        "operationId": "Vendor_ImportFromExcel",
+        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Import result" } }
       }
     },
     "/api/Product/GetById": {
@@ -160,9 +201,18 @@
         "summary": "Get product by ID",
         "operationId": "Product_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } }
+      }
+    },
+    "/api/Product/GetBySku": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get product by SKU",
+        "operationId": "Product_GetBySku",
+        "parameters": [
+          { "name": "sku", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Product SKU" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } }
       }
@@ -172,35 +222,146 @@
         "tags": ["Product"],
         "summary": "Create or update a product",
         "operationId": "Product_CreateOrUpdate",
+        "parameters": [
+          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
+        ],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } },
         "responses": { "200": { "description": "Product created/updated" } }
       }
     },
-    "/api/Product/Delete": {
+    "/api/Product/DeleteBatch": {
       "post": {
         "tags": ["Product"],
-        "summary": "Delete a product",
-        "operationId": "Product_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Product deleted" } }
+        "summary": "Delete multiple products",
+        "operationId": "Product_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Products deleted successfully" } }
       }
     },
-    "/api/Warehouse/Get": {
+    "/api/Product/AddOrUpdateComponent": {
       "get": {
-        "tags": ["Warehouse"],
-        "summary": "Get all warehouses",
-        "operationId": "Warehouse_Get",
+        "tags": ["Product"],
+        "summary": "Add or update BOM component",
+        "operationId": "Product_AddOrUpdateComponent",
         "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Parent product ID" },
+          { "name": "componentId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Component product ID" },
+          { "name": "quantity", "in": "query", "required": true, "schema": { "type": "number" }, "description": "Component quantity" },
+          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
         ],
+        "responses": { "200": { "description": "Component added/updated" } }
+      }
+    },
+    "/api/Product/RemoveComponent": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Remove BOM component",
+        "operationId": "Product_RemoveComponent",
+        "parameters": [
+          { "name": "componentId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Component ID" },
+          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
+        ],
+        "responses": { "200": { "description": "Component removed" } }
+      }
+    },
+    "/api/Product/AddOrUpdatePacksize": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Add or update product packsize",
+        "operationId": "Product_AddOrUpdatePacksize",
+        "parameters": [
+          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" },
+          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "Packsize added/updated" } }
+      }
+    },
+    "/api/Product/RemovePacksize": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Remove product packsize",
+        "operationId": "Product_RemovePacksize",
+        "parameters": [
+          { "name": "packsizeId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Packsize ID" },
+          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
+        ],
+        "responses": { "200": { "description": "Packsize removed" } }
+      }
+    },
+    "/api/Product/ProductImages": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get product images",
+        "operationId": "Product_ProductImages",
+        "parameters": [
+          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+        ],
+        "responses": { "200": { "description": "List of product images" } }
+      }
+    },
+    "/api/Product/UploadProductImage": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Upload product image",
+        "operationId": "Product_UploadProductImage",
+        "parameters": [
+          { "name": "key", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+        ],
+        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Image uploaded" } }
+      }
+    },
+    "/api/Product/DeleteProductImage": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Delete product image",
+        "operationId": "Product_DeleteProductImage",
+        "parameters": [
+          { "name": "key", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Resource ID" }
+        ],
+        "responses": { "200": { "description": "Image deleted" } }
+      }
+    },
+    "/api/Product/ExportToExcel": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Export products to Excel",
+        "operationId": "Product_ExportToExcel",
         "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Warehouse" } } } } }
+          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
         }
+      }
+    },
+    "/api/Product/ImportFromExcel": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Import products from Excel",
+        "operationId": "Product_ImportFromExcel",
+        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Import result" } }
+      }
+    },
+    "/api/Product/SynchronizeProduct": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Synchronize product with P4W",
+        "operationId": "Product_SynchronizeProduct",
+        "parameters": [
+          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+        ],
+        "responses": { "200": { "description": "Product synchronized" } }
+      }
+    },
+    "/api/Product/Discontinue": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Discontinue a product",
+        "operationId": "Product_Discontinue",
+        "parameters": [
+          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+        ],
+        "responses": { "200": { "description": "Product discontinued" } }
       }
     },
     "/api/Warehouse/GetById": {
@@ -209,9 +370,7 @@
         "summary": "Get warehouse by ID",
         "operationId": "Warehouse_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Warehouse ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Warehouse" } } } } }
       }
@@ -225,31 +384,13 @@
         "responses": { "200": { "description": "Warehouse created/updated" } }
       }
     },
-    "/api/Warehouse/Delete": {
+    "/api/Warehouse/DeleteBatch": {
       "post": {
         "tags": ["Warehouse"],
-        "summary": "Delete a warehouse",
-        "operationId": "Warehouse_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Warehouse deleted" } }
-      }
-    },
-    "/api/Account/Get": {
-      "get": {
-        "tags": ["Account"],
-        "summary": "Get all GL accounts",
-        "operationId": "Account_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Account" } } } } }
-        }
+        "summary": "Delete multiple warehouses",
+        "operationId": "Warehouse_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Warehouses deleted successfully" } }
       }
     },
     "/api/Account/GetById": {
@@ -258,9 +399,7 @@
         "summary": "Get GL account by ID",
         "operationId": "Account_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Account ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Account" } } } } }
       }
@@ -274,31 +413,40 @@
         "responses": { "200": { "description": "Account created/updated" } }
       }
     },
-    "/api/Account/Delete": {
+    "/api/Account/DeleteBatch": {
       "post": {
         "tags": ["Account"],
-        "summary": "Delete a GL account",
-        "operationId": "Account_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Account deleted" } }
+        "summary": "Delete multiple GL accounts",
+        "operationId": "Account_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Accounts deleted successfully" } }
       }
     },
-    "/api/SalesQuote/Get": {
+    "/api/Account/ExportToExcel": {
       "get": {
-        "tags": ["SalesQuote"],
-        "summary": "Get all sales quotes",
-        "operationId": "SalesQuote_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
+        "tags": ["Account"],
+        "summary": "Export accounts to Excel",
+        "operationId": "Account_ExportToExcel",
         "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/SalesQuote" } } } } }
+          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
         }
+      }
+    },
+    "/api/Account/ImportFromExcel": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "Import accounts from Excel",
+        "operationId": "Account_ImportFromExcel",
+        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Import result" } }
+      }
+    },
+    "/api/Account/GetPrimingAccounts": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Get accounts available for priming",
+        "operationId": "Account_GetPrimingAccounts",
+        "responses": { "200": { "description": "List of priming accounts" } }
       }
     },
     "/api/SalesQuote/GetById": {
@@ -307,9 +455,7 @@
         "summary": "Get sales quote by ID",
         "operationId": "SalesQuote_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesQuote" } } } } }
       }
@@ -323,31 +469,64 @@
         "responses": { "200": { "description": "Sales quote created/updated" } }
       }
     },
-    "/api/SalesQuote/Delete": {
-      "post": {
+    "/api/SalesQuote/Clone": {
+      "get": {
         "tags": ["SalesQuote"],
-        "summary": "Delete a sales quote",
-        "operationId": "SalesQuote_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Sales quote deleted" } }
+        "summary": "Clone a sales quote",
+        "operationId": "SalesQuote_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned sales quote" } }
       }
     },
-    "/api/SalesOrder/Get": {
+    "/api/SalesQuote/Duplicate": {
       "get": {
-        "tags": ["SalesOrder"],
-        "summary": "Get all sales orders",
-        "operationId": "SalesOrder_Get",
+        "tags": ["SalesQuote"],
+        "summary": "Duplicate quote for different customer",
+        "operationId": "SalesQuote_Duplicate",
         "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" },
+          { "name": "customerId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "New Customer ID" }
         ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/SalesOrder" } } } } }
-        }
+        "responses": { "200": { "description": "Duplicated sales quote" } }
+      }
+    },
+    "/api/SalesQuote/Lock": {
+      "post": {
+        "tags": ["SalesQuote"],
+        "summary": "Lock sales quotes to finalize",
+        "operationId": "SalesQuote_Lock",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Sales quotes locked" } }
+      }
+    },
+    "/api/SalesQuote/ToDraft": {
+      "post": {
+        "tags": ["SalesQuote"],
+        "summary": "Return locked quotes to draft status",
+        "operationId": "SalesQuote_ToDraft",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Sales quotes returned to draft" } }
+      }
+    },
+    "/api/SalesQuote/GenerateSalesOrder": {
+      "get": {
+        "tags": ["SalesQuote"],
+        "summary": "Generate sales order from quote",
+        "operationId": "SalesQuote_GenerateSalesOrder",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" }
+        ],
+        "responses": { "200": { "description": "Generated sales order ID" } }
+      }
+    },
+    "/api/SalesQuote/ApplyTotals": {
+      "get": {
+        "tags": ["SalesQuote"],
+        "summary": "Apply/recalculate totals on quotes",
+        "operationId": "SalesQuote_ApplyTotals",
+        "responses": { "200": { "description": "Totals recalculated" } }
       }
     },
     "/api/SalesOrder/GetById": {
@@ -356,9 +535,7 @@
         "summary": "Get sales order by ID",
         "operationId": "SalesOrder_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Order ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesOrder" } } } } }
       }
@@ -372,31 +549,33 @@
         "responses": { "200": { "description": "Sales order created/updated" } }
       }
     },
-    "/api/SalesOrder/Delete": {
-      "post": {
+    "/api/SalesOrder/Clone": {
+      "get": {
         "tags": ["SalesOrder"],
-        "summary": "Delete a sales order",
-        "operationId": "SalesOrder_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Sales order deleted" } }
+        "summary": "Clone a sales order",
+        "operationId": "SalesOrder_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Order ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned sales order" } }
       }
     },
-    "/api/Invoice/Get": {
-      "get": {
-        "tags": ["Invoice"],
-        "summary": "Get all invoices",
-        "operationId": "Invoice_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Invoice" } } } } }
-        }
+    "/api/SalesOrder/Lock": {
+      "post": {
+        "tags": ["SalesOrder"],
+        "summary": "Lock sales orders",
+        "operationId": "SalesOrder_Lock",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Sales orders locked" } }
+      }
+    },
+    "/api/SalesOrder/ToDraft": {
+      "post": {
+        "tags": ["SalesOrder"],
+        "summary": "Return locked orders to draft",
+        "operationId": "SalesOrder_ToDraft",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Sales orders returned to draft" } }
       }
     },
     "/api/Invoice/GetById": {
@@ -405,9 +584,7 @@
         "summary": "Get invoice by ID",
         "operationId": "Invoice_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Invoice ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Invoice" } } } } }
       }
@@ -421,40 +598,42 @@
         "responses": { "200": { "description": "Invoice created/updated" } }
       }
     },
-    "/api/Invoice/Delete": {
-      "post": {
+    "/api/Invoice/Clone": {
+      "get": {
         "tags": ["Invoice"],
-        "summary": "Delete an invoice",
-        "operationId": "Invoice_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Invoice deleted" } }
+        "summary": "Clone an invoice",
+        "operationId": "Invoice_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Invoice ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned invoice" } }
       }
     },
-    "/api/Invoice/PostBatch": {
+    "/api/Invoice/Lock": {
       "post": {
         "tags": ["Invoice"],
-        "summary": "Post invoices to GL",
-        "operationId": "Invoice_PostBatch",
+        "summary": "Lock invoices to finalize",
+        "operationId": "Invoice_Lock",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Invoices locked" } }
+      }
+    },
+    "/api/Invoice/Post": {
+      "post": {
+        "tags": ["Invoice"],
+        "summary": "Post invoices to general ledger",
+        "operationId": "Invoice_Post",
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
         "responses": { "200": { "description": "Invoices posted successfully" } }
       }
     },
-    "/api/InventoryDelivery/Get": {
-      "get": {
-        "tags": ["InventoryDelivery"],
-        "summary": "Get all inventory deliveries",
-        "operationId": "InventoryDelivery_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/InventoryDelivery" } } } } }
-        }
+    "/api/Invoice/Void": {
+      "post": {
+        "tags": ["Invoice"],
+        "summary": "Void invoices",
+        "operationId": "Invoice_Void",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Invoices voided" } }
       }
     },
     "/api/InventoryDelivery/GetById": {
@@ -463,9 +642,7 @@
         "summary": "Get inventory delivery by ID",
         "operationId": "InventoryDelivery_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Inventory Delivery ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryDelivery" } } } } }
       }
@@ -479,31 +656,36 @@
         "responses": { "200": { "description": "Inventory delivery created/updated" } }
       }
     },
-    "/api/InventoryDelivery/Delete": {
-      "post": {
+    "/api/InventoryDelivery/Clone": {
+      "get": {
         "tags": ["InventoryDelivery"],
-        "summary": "Delete an inventory delivery",
-        "operationId": "InventoryDelivery_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Inventory delivery deleted" } }
+        "summary": "Clone an inventory delivery",
+        "operationId": "InventoryDelivery_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Delivery ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned delivery" } }
       }
     },
-    "/api/PurchaseOrder/Get": {
+    "/api/InventoryDelivery/GenerateInvoice": {
       "get": {
-        "tags": ["PurchaseOrder"],
-        "summary": "Get all purchase orders",
-        "operationId": "PurchaseOrder_Get",
+        "tags": ["InventoryDelivery"],
+        "summary": "Generate invoice from delivery",
+        "operationId": "InventoryDelivery_GenerateInvoice",
         "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Delivery ID" },
+          { "name": "comments", "in": "query", "schema": { "type": "string" }, "description": "Invoice comments" }
         ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PurchaseOrder" } } } } }
-        }
+        "responses": { "200": { "description": "Generated invoice ID" } }
+      }
+    },
+    "/api/InventoryDelivery/Ship": {
+      "post": {
+        "tags": ["InventoryDelivery"],
+        "summary": "Mark deliveries as shipped",
+        "operationId": "InventoryDelivery_Ship",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Deliveries marked as shipped" } }
       }
     },
     "/api/PurchaseOrder/GetById": {
@@ -512,9 +694,7 @@
         "summary": "Get purchase order by ID",
         "operationId": "PurchaseOrder_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Purchase Order ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PurchaseOrder" } } } } }
       }
@@ -528,31 +708,33 @@
         "responses": { "200": { "description": "Purchase order created/updated" } }
       }
     },
-    "/api/PurchaseOrder/Delete": {
-      "post": {
+    "/api/PurchaseOrder/Clone": {
+      "get": {
         "tags": ["PurchaseOrder"],
-        "summary": "Delete a purchase order",
-        "operationId": "PurchaseOrder_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Purchase order deleted" } }
+        "summary": "Clone a purchase order",
+        "operationId": "PurchaseOrder_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Purchase Order ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned purchase order" } }
       }
     },
-    "/api/VendorBill/Get": {
-      "get": {
-        "tags": ["VendorBill"],
-        "summary": "Get all vendor bills",
-        "operationId": "VendorBill_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/VendorBill" } } } } }
-        }
+    "/api/PurchaseOrder/Lock": {
+      "post": {
+        "tags": ["PurchaseOrder"],
+        "summary": "Lock purchase orders",
+        "operationId": "PurchaseOrder_Lock",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Purchase orders locked" } }
+      }
+    },
+    "/api/PurchaseOrder/ToDraft": {
+      "post": {
+        "tags": ["PurchaseOrder"],
+        "summary": "Return purchase orders to draft",
+        "operationId": "PurchaseOrder_ToDraft",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Purchase orders returned to draft" } }
       }
     },
     "/api/VendorBill/GetById": {
@@ -561,9 +743,7 @@
         "summary": "Get vendor bill by ID",
         "operationId": "VendorBill_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor Bill ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VendorBill" } } } } }
       }
@@ -577,31 +757,42 @@
         "responses": { "200": { "description": "Vendor bill created/updated" } }
       }
     },
-    "/api/VendorBill/Delete": {
-      "post": {
+    "/api/VendorBill/Clone": {
+      "get": {
         "tags": ["VendorBill"],
-        "summary": "Delete a vendor bill",
-        "operationId": "VendorBill_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Vendor bill deleted" } }
+        "summary": "Clone a vendor bill",
+        "operationId": "VendorBill_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Vendor Bill ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned vendor bill" } }
       }
     },
-    "/api/InventoryReceipt/Get": {
-      "get": {
-        "tags": ["InventoryReceipt"],
-        "summary": "Get all inventory receipts",
-        "operationId": "InventoryReceipt_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/InventoryReceipt" } } } } }
-        }
+    "/api/VendorBill/Lock": {
+      "post": {
+        "tags": ["VendorBill"],
+        "summary": "Lock vendor bills",
+        "operationId": "VendorBill_Lock",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Vendor bills locked" } }
+      }
+    },
+    "/api/VendorBill/Post": {
+      "post": {
+        "tags": ["VendorBill"],
+        "summary": "Post vendor bills to general ledger",
+        "operationId": "VendorBill_Post",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Vendor bills posted" } }
+      }
+    },
+    "/api/VendorBill/Void": {
+      "post": {
+        "tags": ["VendorBill"],
+        "summary": "Void vendor bills",
+        "operationId": "VendorBill_Void",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Vendor bills voided" } }
       }
     },
     "/api/InventoryReceipt/GetById": {
@@ -610,9 +801,7 @@
         "summary": "Get inventory receipt by ID",
         "operationId": "InventoryReceipt_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Inventory Receipt ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryReceipt" } } } } }
       }
@@ -626,31 +815,35 @@
         "responses": { "200": { "description": "Inventory receipt created/updated" } }
       }
     },
-    "/api/InventoryReceipt/Delete": {
-      "post": {
+    "/api/InventoryReceipt/Clone": {
+      "get": {
         "tags": ["InventoryReceipt"],
-        "summary": "Delete an inventory receipt",
-        "operationId": "InventoryReceipt_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Inventory receipt deleted" } }
+        "summary": "Clone an inventory receipt",
+        "operationId": "InventoryReceipt_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Receipt ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned receipt" } }
       }
     },
-    "/api/JournalEntry/Get": {
+    "/api/InventoryReceipt/GenerateBill": {
       "get": {
-        "tags": ["JournalEntry"],
-        "summary": "Get all journal entries",
-        "operationId": "JournalEntry_Get",
+        "tags": ["InventoryReceipt"],
+        "summary": "Generate vendor bill from receipt",
+        "operationId": "InventoryReceipt_GenerateBill",
         "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } },
-          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
-          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
-          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Receipt ID" }
         ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/JournalEntry" } } } } }
-        }
+        "responses": { "200": { "description": "Generated vendor bill ID" } }
+      }
+    },
+    "/api/InventoryReceipt/Receive": {
+      "post": {
+        "tags": ["InventoryReceipt"],
+        "summary": "Mark receipts as received",
+        "operationId": "InventoryReceipt_Receive",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Receipts marked as received" } }
       }
     },
     "/api/JournalEntry/GetById": {
@@ -659,9 +852,7 @@
         "summary": "Get journal entry by ID",
         "operationId": "JournalEntry_GetById",
         "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Journal Entry ID" }
         ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } } }
       }
@@ -675,55 +866,75 @@
         "responses": { "200": { "description": "Journal entry created/updated" } }
       }
     },
-    "/api/JournalEntry/Delete": {
+    "/api/JournalEntry/Clone": {
+      "get": {
+        "tags": ["JournalEntry"],
+        "summary": "Clone a journal entry",
+        "operationId": "JournalEntry_Clone",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Journal Entry ID to clone" }
+        ],
+        "responses": { "200": { "description": "Cloned journal entry" } }
+      }
+    },
+    "/api/JournalEntry/PostBatch": {
       "post": {
         "tags": ["JournalEntry"],
-        "summary": "Delete a journal entry",
-        "operationId": "JournalEntry_Delete",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
-        "responses": { "200": { "description": "Journal entry deleted" } }
+        "summary": "Post multiple journal entries",
+        "operationId": "JournalEntry_PostBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Journal entries posted" } }
       }
     },
-    "/api/PrintReport/Get": {
+    "/api/JournalEntry/GetByRefId": {
+      "get": {
+        "tags": ["JournalEntry"],
+        "summary": "Get journal entry by reference ID",
+        "operationId": "JournalEntry_GetByRefId",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Reference document ID" }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } } }
+      }
+    },
+    "/api/PrintReport/GetById": {
       "get": {
         "tags": ["PrintReport"],
-        "summary": "Get all print report templates",
-        "operationId": "PrintReport_Get",
+        "summary": "Get print report by ID",
+        "operationId": "PrintReport_GetById",
         "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Print Report ID" }
         ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PrintReport" } } } } }
-        }
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PrintReport" } } } } }
       }
     },
-    "/api/PrintReport/Report": {
+    "/api/PrintReport/CreateOrUpdate": {
+      "post": {
+        "tags": ["PrintReport"],
+        "summary": "Create or update a print report",
+        "operationId": "PrintReport_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PrintReport" } } } },
+        "responses": { "200": { "description": "Print report created/updated" } }
+      }
+    },
+    "/api/PrintReport/DeleteBatch": {
+      "post": {
+        "tags": ["PrintReport"],
+        "summary": "Delete multiple print reports",
+        "operationId": "PrintReport_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Print reports deleted" } }
+      }
+    },
+    "/api/PrintReport/GetTemplate": {
       "get": {
         "tags": ["PrintReport"],
-        "summary": "Generate a report PDF",
-        "operationId": "PrintReport_Report",
+        "summary": "Get report template",
+        "operationId": "PrintReport_GetTemplate",
         "parameters": [
-          { "name": "reportId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Report template ID" },
-          { "name": "docId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Document ID to report on" }
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Report ID" }
         ],
-        "responses": {
-          "200": { "description": "PDF file", "content": { "application/pdf": { "schema": { "type": "string", "format": "binary" } } } }
-        }
-      }
-    },
-    "/api/Dashboard/Get": {
-      "get": {
-        "tags": ["Dashboard"],
-        "summary": "Get all dashboards",
-        "operationId": "Dashboard_Get",
-        "parameters": [
-          { "name": "selects", "in": "query", "schema": { "type": "string" } },
-          { "name": "filter", "in": "query", "schema": { "type": "string" } }
-        ],
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Dashboard" } } } } }
-        }
+        "responses": { "200": { "description": "Report template data" } }
       }
     },
     "/api/Dashboard/GetById": {
@@ -731,8 +942,59 @@
         "tags": ["Dashboard"],
         "summary": "Get dashboard by ID",
         "operationId": "Dashboard_GetById",
-        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" }
+        ],
         "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Dashboard" } } } } }
+      }
+    },
+    "/api/Dashboard/CreateOrUpdate": {
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Create or update a dashboard",
+        "operationId": "Dashboard_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Dashboard" } } } },
+        "responses": { "200": { "description": "Dashboard created/updated" } }
+      }
+    },
+    "/api/Dashboard/DeleteBatch": {
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Delete multiple dashboards",
+        "operationId": "Dashboard_DeleteBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Dashboards deleted" } }
+      }
+    },
+    "/api/Dashboard/GetDashboardById": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard with full panel details",
+        "operationId": "Dashboard_GetDashboardById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" }
+        ],
+        "responses": { "200": { "description": "Dashboard with panels" } }
+      }
+    },
+    "/api/Dashboard/ExportDashboard": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Export dashboard to JSON",
+        "operationId": "Dashboard_ExportDashboard",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Dashboard ID" }
+        ],
+        "responses": { "200": { "description": "Dashboard JSON export" } }
+      }
+    },
+    "/api/Dashboard/ImportDashboard": {
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Import dashboard from JSON file",
+        "operationId": "Dashboard_ImportDashboard",
+        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Dashboard imported" } }
       }
     }
   },
