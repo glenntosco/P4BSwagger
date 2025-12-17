@@ -3,12 +3,12 @@
   "info": {
     "title": "P4Books ERP API",
     "version": "1.0.0",
-    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Authentication\nUse the `ApiKey` header with your API key.",
+    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Authentication\nUse the `ApiKey` header with your API key. The tenant is automatically determined from your API key.",
   },
   "servers": [
     {
-      "url": "https://test93.p4books.cloud",
-      "description": "Test Tenant (test93)"
+      "url": "https://api.p4books.cloud",
+      "description": "P4Books API (tenant determined by API key)"
     }
   ],
   "security": [
