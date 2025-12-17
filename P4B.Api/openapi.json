@@ -1,0 +1,1111 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "P4Books ERP API",
+    "version": "1.0.0",
+    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive multi-tenant ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Multi-Tenancy\nThis API uses subdomain-based multi-tenancy. Each tenant has their own database.\n- Production: `{tenant}.p4books.cloud`\n- Testing: `{tenant}.p4books.local`\n\n### Authentication\nThe API supports two authentication methods:\n1. **API Key**: Use the `ApiKey` header with your API key\n2. **Session Token**: Use the `AuthenticationToken` header with an encrypted session token\n\n### Tenant Selection\nUse the `X-Tenant-Alias` header to specify which tenant database to connect to.",
+    "contact": {
+      "name": "P4Books Support",
+      "email": "support@p4books.cloud",
+      "url": "https://p4books.cloud"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://p4books.cloud/license"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{tenant}.p4books.cloud",
+      "description": "Production Server",
+      "variables": {
+        "tenant": { "default": "demo", "description": "Tenant alias" }
+      }
+    },
+    {
+      "url": "https://{tenant}.p4books.local",
+      "description": "Local Testing Server",
+      "variables": {
+        "tenant": { "default": "demo", "description": "Tenant alias" }
+      }
+    }
+  ],
+  "security": [
+    { "ApiKey": [] },
+    { "AuthenticationToken": [] }
+  ],
+  "tags": [
+    { "name": "Customer", "description": "Customer master data" },
+    { "name": "Vendor", "description": "Vendor master data" },
+    { "name": "Product", "description": "Product master data" },
+    { "name": "Warehouse", "description": "Warehouse management" },
+    { "name": "Account", "description": "Chart of accounts" },
+    { "name": "SalesQuote", "description": "Sales quotes" },
+    { "name": "SalesOrder", "description": "Sales orders" },
+    { "name": "Invoice", "description": "Customer invoices" },
+    { "name": "InventoryDelivery", "description": "Inventory deliveries (shipments)" },
+    { "name": "PurchaseOrder", "description": "Purchase orders" },
+    { "name": "VendorBill", "description": "Vendor bills" },
+    { "name": "InventoryReceipt", "description": "Inventory receipts" },
+    { "name": "JournalEntry", "description": "GL journal entries" },
+    { "name": "PrintReport", "description": "Report generation" },
+    { "name": "Dashboard", "description": "Dashboard widgets" }
+  ],
+  "paths": {
+    "/api/Customer/Get": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get all customers",
+        "operationId": "Customer_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated properties to select" },
+          { "name": "includes", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated navigation properties to include" },
+          { "name": "filter", "in": "query", "schema": { "type": "string" }, "description": "Filter expression" },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" }, "description": "Order by property" },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" }, "description": "Number of records to skip" },
+          { "name": "take", "in": "query", "schema": { "type": "integer" }, "description": "Number of records to take" }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Customer" } } } } }
+        }
+      }
+    },
+    "/api/Customer/GetById": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get customer by ID",
+        "operationId": "Customer_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Customer" } } } }
+        }
+      }
+    },
+    "/api/Customer/CreateOrUpdate": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Create or update a customer",
+        "operationId": "Customer_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Customer" } } } },
+        "responses": { "200": { "description": "Customer created/updated successfully" } }
+      }
+    },
+    "/api/Customer/Delete": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Delete a customer",
+        "operationId": "Customer_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Customer deleted" } }
+      }
+    },
+    "/api/Vendor/Get": {
+      "get": {
+        "tags": ["Vendor"],
+        "summary": "Get all vendors",
+        "operationId": "Vendor_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Vendor" } } } } }
+        }
+      }
+    },
+    "/api/Vendor/GetById": {
+      "get": {
+        "tags": ["Vendor"],
+        "summary": "Get vendor by ID",
+        "operationId": "Vendor_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Vendor" } } } } }
+      }
+    },
+    "/api/Vendor/CreateOrUpdate": {
+      "post": {
+        "tags": ["Vendor"],
+        "summary": "Create or update a vendor",
+        "operationId": "Vendor_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Vendor" } } } },
+        "responses": { "200": { "description": "Vendor created/updated successfully" } }
+      }
+    },
+    "/api/Vendor/Delete": {
+      "post": {
+        "tags": ["Vendor"],
+        "summary": "Delete a vendor",
+        "operationId": "Vendor_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Vendor deleted" } }
+      }
+    },
+    "/api/Product/Get": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get all products",
+        "operationId": "Product_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } } } } }
+        }
+      }
+    },
+    "/api/Product/GetById": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get product by ID",
+        "operationId": "Product_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } }
+      }
+    },
+    "/api/Product/CreateOrUpdate": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Create or update a product",
+        "operationId": "Product_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } },
+        "responses": { "200": { "description": "Product created/updated" } }
+      }
+    },
+    "/api/Product/Delete": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Delete a product",
+        "operationId": "Product_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Product deleted" } }
+      }
+    },
+    "/api/Warehouse/Get": {
+      "get": {
+        "tags": ["Warehouse"],
+        "summary": "Get all warehouses",
+        "operationId": "Warehouse_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Warehouse" } } } } }
+        }
+      }
+    },
+    "/api/Warehouse/GetById": {
+      "get": {
+        "tags": ["Warehouse"],
+        "summary": "Get warehouse by ID",
+        "operationId": "Warehouse_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Warehouse" } } } } }
+      }
+    },
+    "/api/Warehouse/CreateOrUpdate": {
+      "post": {
+        "tags": ["Warehouse"],
+        "summary": "Create or update a warehouse",
+        "operationId": "Warehouse_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Warehouse" } } } },
+        "responses": { "200": { "description": "Warehouse created/updated" } }
+      }
+    },
+    "/api/Warehouse/Delete": {
+      "post": {
+        "tags": ["Warehouse"],
+        "summary": "Delete a warehouse",
+        "operationId": "Warehouse_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Warehouse deleted" } }
+      }
+    },
+    "/api/Account/Get": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Get all GL accounts",
+        "operationId": "Account_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Account" } } } } }
+        }
+      }
+    },
+    "/api/Account/GetById": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Get GL account by ID",
+        "operationId": "Account_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Account" } } } } }
+      }
+    },
+    "/api/Account/CreateOrUpdate": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "Create or update a GL account",
+        "operationId": "Account_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Account" } } } },
+        "responses": { "200": { "description": "Account created/updated" } }
+      }
+    },
+    "/api/Account/Delete": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "Delete a GL account",
+        "operationId": "Account_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Account deleted" } }
+      }
+    },
+    "/api/SalesQuote/Get": {
+      "get": {
+        "tags": ["SalesQuote"],
+        "summary": "Get all sales quotes",
+        "operationId": "SalesQuote_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/SalesQuote" } } } } }
+        }
+      }
+    },
+    "/api/SalesQuote/GetById": {
+      "get": {
+        "tags": ["SalesQuote"],
+        "summary": "Get sales quote by ID",
+        "operationId": "SalesQuote_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesQuote" } } } } }
+      }
+    },
+    "/api/SalesQuote/CreateOrUpdate": {
+      "post": {
+        "tags": ["SalesQuote"],
+        "summary": "Create or update a sales quote",
+        "operationId": "SalesQuote_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesQuote" } } } },
+        "responses": { "200": { "description": "Sales quote created/updated" } }
+      }
+    },
+    "/api/SalesQuote/Delete": {
+      "post": {
+        "tags": ["SalesQuote"],
+        "summary": "Delete a sales quote",
+        "operationId": "SalesQuote_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Sales quote deleted" } }
+      }
+    },
+    "/api/SalesOrder/Get": {
+      "get": {
+        "tags": ["SalesOrder"],
+        "summary": "Get all sales orders",
+        "operationId": "SalesOrder_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/SalesOrder" } } } } }
+        }
+      }
+    },
+    "/api/SalesOrder/GetById": {
+      "get": {
+        "tags": ["SalesOrder"],
+        "summary": "Get sales order by ID",
+        "operationId": "SalesOrder_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesOrder" } } } } }
+      }
+    },
+    "/api/SalesOrder/CreateOrUpdate": {
+      "post": {
+        "tags": ["SalesOrder"],
+        "summary": "Create or update a sales order",
+        "operationId": "SalesOrder_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SalesOrder" } } } },
+        "responses": { "200": { "description": "Sales order created/updated" } }
+      }
+    },
+    "/api/SalesOrder/Delete": {
+      "post": {
+        "tags": ["SalesOrder"],
+        "summary": "Delete a sales order",
+        "operationId": "SalesOrder_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Sales order deleted" } }
+      }
+    },
+    "/api/Invoice/Get": {
+      "get": {
+        "tags": ["Invoice"],
+        "summary": "Get all invoices",
+        "operationId": "Invoice_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Invoice" } } } } }
+        }
+      }
+    },
+    "/api/Invoice/GetById": {
+      "get": {
+        "tags": ["Invoice"],
+        "summary": "Get invoice by ID",
+        "operationId": "Invoice_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Invoice" } } } } }
+      }
+    },
+    "/api/Invoice/CreateOrUpdate": {
+      "post": {
+        "tags": ["Invoice"],
+        "summary": "Create or update an invoice",
+        "operationId": "Invoice_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Invoice" } } } },
+        "responses": { "200": { "description": "Invoice created/updated" } }
+      }
+    },
+    "/api/Invoice/Delete": {
+      "post": {
+        "tags": ["Invoice"],
+        "summary": "Delete an invoice",
+        "operationId": "Invoice_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Invoice deleted" } }
+      }
+    },
+    "/api/Invoice/PostBatch": {
+      "post": {
+        "tags": ["Invoice"],
+        "summary": "Post invoices to GL",
+        "operationId": "Invoice_PostBatch",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
+        "responses": { "200": { "description": "Invoices posted successfully" } }
+      }
+    },
+    "/api/InventoryDelivery/Get": {
+      "get": {
+        "tags": ["InventoryDelivery"],
+        "summary": "Get all inventory deliveries",
+        "operationId": "InventoryDelivery_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/InventoryDelivery" } } } } }
+        }
+      }
+    },
+    "/api/InventoryDelivery/GetById": {
+      "get": {
+        "tags": ["InventoryDelivery"],
+        "summary": "Get inventory delivery by ID",
+        "operationId": "InventoryDelivery_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryDelivery" } } } } }
+      }
+    },
+    "/api/InventoryDelivery/CreateOrUpdate": {
+      "post": {
+        "tags": ["InventoryDelivery"],
+        "summary": "Create or update an inventory delivery",
+        "operationId": "InventoryDelivery_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryDelivery" } } } },
+        "responses": { "200": { "description": "Inventory delivery created/updated" } }
+      }
+    },
+    "/api/InventoryDelivery/Delete": {
+      "post": {
+        "tags": ["InventoryDelivery"],
+        "summary": "Delete an inventory delivery",
+        "operationId": "InventoryDelivery_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Inventory delivery deleted" } }
+      }
+    },
+    "/api/PurchaseOrder/Get": {
+      "get": {
+        "tags": ["PurchaseOrder"],
+        "summary": "Get all purchase orders",
+        "operationId": "PurchaseOrder_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PurchaseOrder" } } } } }
+        }
+      }
+    },
+    "/api/PurchaseOrder/GetById": {
+      "get": {
+        "tags": ["PurchaseOrder"],
+        "summary": "Get purchase order by ID",
+        "operationId": "PurchaseOrder_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PurchaseOrder" } } } } }
+      }
+    },
+    "/api/PurchaseOrder/CreateOrUpdate": {
+      "post": {
+        "tags": ["PurchaseOrder"],
+        "summary": "Create or update a purchase order",
+        "operationId": "PurchaseOrder_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PurchaseOrder" } } } },
+        "responses": { "200": { "description": "Purchase order created/updated" } }
+      }
+    },
+    "/api/PurchaseOrder/Delete": {
+      "post": {
+        "tags": ["PurchaseOrder"],
+        "summary": "Delete a purchase order",
+        "operationId": "PurchaseOrder_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Purchase order deleted" } }
+      }
+    },
+    "/api/VendorBill/Get": {
+      "get": {
+        "tags": ["VendorBill"],
+        "summary": "Get all vendor bills",
+        "operationId": "VendorBill_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/VendorBill" } } } } }
+        }
+      }
+    },
+    "/api/VendorBill/GetById": {
+      "get": {
+        "tags": ["VendorBill"],
+        "summary": "Get vendor bill by ID",
+        "operationId": "VendorBill_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VendorBill" } } } } }
+      }
+    },
+    "/api/VendorBill/CreateOrUpdate": {
+      "post": {
+        "tags": ["VendorBill"],
+        "summary": "Create or update a vendor bill",
+        "operationId": "VendorBill_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VendorBill" } } } },
+        "responses": { "200": { "description": "Vendor bill created/updated" } }
+      }
+    },
+    "/api/VendorBill/Delete": {
+      "post": {
+        "tags": ["VendorBill"],
+        "summary": "Delete a vendor bill",
+        "operationId": "VendorBill_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Vendor bill deleted" } }
+      }
+    },
+    "/api/InventoryReceipt/Get": {
+      "get": {
+        "tags": ["InventoryReceipt"],
+        "summary": "Get all inventory receipts",
+        "operationId": "InventoryReceipt_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/InventoryReceipt" } } } } }
+        }
+      }
+    },
+    "/api/InventoryReceipt/GetById": {
+      "get": {
+        "tags": ["InventoryReceipt"],
+        "summary": "Get inventory receipt by ID",
+        "operationId": "InventoryReceipt_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryReceipt" } } } } }
+      }
+    },
+    "/api/InventoryReceipt/CreateOrUpdate": {
+      "post": {
+        "tags": ["InventoryReceipt"],
+        "summary": "Create or update an inventory receipt",
+        "operationId": "InventoryReceipt_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InventoryReceipt" } } } },
+        "responses": { "200": { "description": "Inventory receipt created/updated" } }
+      }
+    },
+    "/api/InventoryReceipt/Delete": {
+      "post": {
+        "tags": ["InventoryReceipt"],
+        "summary": "Delete an inventory receipt",
+        "operationId": "InventoryReceipt_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Inventory receipt deleted" } }
+      }
+    },
+    "/api/JournalEntry/Get": {
+      "get": {
+        "tags": ["JournalEntry"],
+        "summary": "Get all journal entries",
+        "operationId": "JournalEntry_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "skip", "in": "query", "schema": { "type": "integer" } },
+          { "name": "take", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/JournalEntry" } } } } }
+        }
+      }
+    },
+    "/api/JournalEntry/GetById": {
+      "get": {
+        "tags": ["JournalEntry"],
+        "summary": "Get journal entry by ID",
+        "operationId": "JournalEntry_GetById",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "includes", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } } }
+      }
+    },
+    "/api/JournalEntry/CreateOrUpdate": {
+      "post": {
+        "tags": ["JournalEntry"],
+        "summary": "Create or update a journal entry",
+        "operationId": "JournalEntry_CreateOrUpdate",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JournalEntry" } } } },
+        "responses": { "200": { "description": "Journal entry created/updated" } }
+      }
+    },
+    "/api/JournalEntry/Delete": {
+      "post": {
+        "tags": ["JournalEntry"],
+        "summary": "Delete a journal entry",
+        "operationId": "JournalEntry_Delete",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "description": "Journal entry deleted" } }
+      }
+    },
+    "/api/PrintReport/Get": {
+      "get": {
+        "tags": ["PrintReport"],
+        "summary": "Get all print report templates",
+        "operationId": "PrintReport_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PrintReport" } } } } }
+        }
+      }
+    },
+    "/api/PrintReport/Report": {
+      "get": {
+        "tags": ["PrintReport"],
+        "summary": "Generate a report PDF",
+        "operationId": "PrintReport_Report",
+        "parameters": [
+          { "name": "reportId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Report template ID" },
+          { "name": "docId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Document ID to report on" }
+        ],
+        "responses": {
+          "200": { "description": "PDF file", "content": { "application/pdf": { "schema": { "type": "string", "format": "binary" } } } }
+        }
+      }
+    },
+    "/api/Dashboard/Get": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get all dashboards",
+        "operationId": "Dashboard_Get",
+        "parameters": [
+          { "name": "selects", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Dashboard" } } } } }
+        }
+      }
+    },
+    "/api/Dashboard/GetById": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard by ID",
+        "operationId": "Dashboard_GetById",
+        "parameters": [ { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } } ],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Dashboard" } } } } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "name": "ApiKey",
+        "in": "header",
+        "description": "API Key authentication. Enter your API key."
+      },
+      "AuthenticationToken": {
+        "type": "apiKey",
+        "name": "AuthenticationToken",
+        "in": "header",
+        "description": "Session token obtained from login. Encrypted JSON token."
+      }
+    },
+    "schemas": {
+      "EntityBase": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "string", "format": "uuid" },
+          "DateCreated": { "type": "string", "format": "date-time" },
+          "DateModified": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Customer": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "Name": { "type": "string" },
+              "Email": { "type": "string" },
+              "Phone": { "type": "string" },
+              "CreditLimit": { "type": "number" },
+              "Balance": { "type": "number" },
+              "CustomerGroupId": { "type": "string", "format": "uuid" },
+              "PaymentTermsId": { "type": "string", "format": "uuid" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "Addresses": { "type": "array", "items": { "$ref": "#/components/schemas/Address" } }
+            }
+          }
+        ]
+      },
+      "Vendor": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "Name": { "type": "string" },
+              "Email": { "type": "string" },
+              "Phone": { "type": "string" },
+              "Balance": { "type": "number" },
+              "VendorGroupId": { "type": "string", "format": "uuid" },
+              "PaymentTermsId": { "type": "string", "format": "uuid" },
+              "CurrencyId": { "type": "string", "format": "uuid" }
+            }
+          }
+        ]
+      },
+      "Product": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "Name": { "type": "string" },
+              "Description": { "type": "string" },
+              "ProductType": { "type": "string", "enum": ["Inventory", "Service", "NonInventory"] },
+              "UnitOfMeasure": { "type": "string" },
+              "Cost": { "type": "number" },
+              "SalesPrice": { "type": "number" },
+              "IsActive": { "type": "boolean" },
+              "IsPacksizeControlled": { "type": "boolean" },
+              "IsLotControlled": { "type": "boolean" },
+              "IsSerialControlled": { "type": "boolean" },
+              "ProductGroupId": { "type": "string", "format": "uuid" }
+            }
+          }
+        ]
+      },
+      "Address": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "AddressType": { "type": "string", "enum": ["Billing", "Shipping", "Both"] },
+              "Line1": { "type": "string" },
+              "Line2": { "type": "string" },
+              "City": { "type": "string" },
+              "State": { "type": "string" },
+              "PostalCode": { "type": "string" },
+              "Country": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "Warehouse": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "Name": { "type": "string" },
+              "Description": { "type": "string" },
+              "IsDefault": { "type": "boolean" },
+              "IsActive": { "type": "boolean" }
+            }
+          }
+        ]
+      },
+      "Account": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "Name": { "type": "string" },
+              "AccountType": { "type": "string", "enum": ["Asset", "Liability", "Equity", "Revenue", "Expense"] },
+              "AccountCategoryId": { "type": "string", "format": "uuid" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "Balance": { "type": "number" },
+              "IsActive": { "type": "boolean" },
+              "IsBankAccount": { "type": "boolean" }
+            }
+          }
+        ]
+      },
+      "SalesQuote": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "CustomerId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "ExpirationDate": { "type": "string", "format": "date" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "Subtotal": { "type": "number" },
+              "TaxTotal": { "type": "number" },
+              "Total": { "type": "number" },
+              "Status": { "type": "string", "enum": ["Draft", "Sent", "Accepted", "Rejected", "Expired"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "SalesOrder": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "CustomerId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "RequiredDate": { "type": "string", "format": "date" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "WarehouseId": { "type": "string", "format": "uuid" },
+              "Subtotal": { "type": "number" },
+              "TaxTotal": { "type": "number" },
+              "Total": { "type": "number" },
+              "Status": { "type": "string", "enum": ["Open", "PartiallyFulfilled", "Fulfilled", "Closed", "Cancelled"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "Invoice": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "CustomerId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "DueDate": { "type": "string", "format": "date" },
+              "PostingDate": { "type": "string", "format": "date" },
+              "ActualPostingDate": { "type": "string", "format": "date" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "Subtotal": { "type": "number" },
+              "TaxTotal": { "type": "number" },
+              "Total": { "type": "number" },
+              "AmountPaid": { "type": "number" },
+              "Balance": { "type": "number" },
+              "Status": { "type": "string", "enum": ["Draft", "Posted", "PartiallyPaid", "Paid", "Void"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "InventoryDelivery": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "CustomerId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "WarehouseId": { "type": "string", "format": "uuid" },
+              "SalesOrderId": { "type": "string", "format": "uuid" },
+              "Status": { "type": "string", "enum": ["Draft", "Shipped", "Delivered"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "PurchaseOrder": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "VendorId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "ExpectedDate": { "type": "string", "format": "date" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "WarehouseId": { "type": "string", "format": "uuid" },
+              "Subtotal": { "type": "number" },
+              "TaxTotal": { "type": "number" },
+              "Total": { "type": "number" },
+              "Status": { "type": "string", "enum": ["Open", "PartiallyReceived", "Received", "Closed", "Cancelled"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "VendorBill": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "VendorId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "DueDate": { "type": "string", "format": "date" },
+              "VendorInvoiceNumber": { "type": "string" },
+              "CurrencyId": { "type": "string", "format": "uuid" },
+              "Subtotal": { "type": "number" },
+              "TaxTotal": { "type": "number" },
+              "Total": { "type": "number" },
+              "AmountPaid": { "type": "number" },
+              "Balance": { "type": "number" },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "InventoryReceipt": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "VendorId": { "type": "string", "format": "uuid" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "WarehouseId": { "type": "string", "format": "uuid" },
+              "PurchaseOrderId": { "type": "string", "format": "uuid" },
+              "Status": { "type": "string", "enum": ["Draft", "Received"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentLine" } }
+            }
+          }
+        ]
+      },
+      "JournalEntry": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Code": { "type": "string" },
+              "DocumentDate": { "type": "string", "format": "date" },
+              "PostingDate": { "type": "string", "format": "date" },
+              "Description": { "type": "string" },
+              "TotalDebit": { "type": "number" },
+              "TotalCredit": { "type": "number" },
+              "Status": { "type": "string", "enum": ["Draft", "Posted", "Void"] },
+              "Lines": { "type": "array", "items": { "$ref": "#/components/schemas/JournalEntryLine" } }
+            }
+          }
+        ]
+      },
+      "JournalEntryLine": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "LineNumber": { "type": "integer" },
+              "AccountId": { "type": "string", "format": "uuid" },
+              "Description": { "type": "string" },
+              "Debit": { "type": "number" },
+              "Credit": { "type": "number" }
+            }
+          }
+        ]
+      },
+      "DocumentLine": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "LineNumber": { "type": "integer" },
+              "ProductId": { "type": "string", "format": "uuid" },
+              "Description": { "type": "string" },
+              "Quantity": { "type": "number" },
+              "Price": { "type": "number" },
+              "Discount": { "type": "number" },
+              "Subtotal": { "type": "number" },
+              "TaxCodeId": { "type": "string", "format": "uuid" }
+            }
+          }
+        ]
+      },
+      "PrintReport": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Name": { "type": "string" },
+              "Description": { "type": "string" },
+              "EntityType": { "type": "string" },
+              "IsDefault": { "type": "boolean" }
+            }
+          }
+        ]
+      },
+      "Dashboard": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "Name": { "type": "string" },
+              "Description": { "type": "string" },
+              "IsDefault": { "type": "boolean" }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
