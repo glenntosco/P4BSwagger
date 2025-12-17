@@ -126,6 +126,10 @@ app.UseSwaggerUI(options =>
             .swagger-ui a:hover { color: var(--p4-blue-dark); }
             /* Hide Servers section - tenant is determined by API key */
             .swagger-ui .scheme-container { display: none !important; }
+            .swagger-ui .servers { display: none !important; }
+            .swagger-ui .servers-title { display: none !important; }
+            .swagger-ui select[aria-label*='Server'] { display: none !important; }
+            .swagger-ui .global-server-container { display: none !important; }
         </style>";
 });
 
