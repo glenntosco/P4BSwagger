@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -24,13 +24,16 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore P4B.Api/P4B.Api.csproj
+        working-directory: ./P4B.Api
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build P4B.Api/P4B.Api.csproj --configuration Release --no-restore
+        working-directory: ./P4B.Api
+        run: dotnet build --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish P4B.Api/P4B.Api.csproj --configuration Release --no-build --output ./publish
+        working-directory: ./P4B.Api
+        run: dotnet publish --configuration Release --no-build --output ../publish
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
