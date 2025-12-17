@@ -99,34 +99,6 @@
         "responses": { "200": { "description": "Vendor created/updated successfully" } }
       }
     },
-    "/api/Vendor/DeleteBatch": {
-      "post": {
-        "tags": ["Vendor"],
-        "summary": "Delete multiple vendors",
-        "operationId": "Vendor_DeleteBatch",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Vendors deleted successfully" } }
-      }
-    },
-    "/api/Vendor/ExportToExcel": {
-      "get": {
-        "tags": ["Vendor"],
-        "summary": "Export vendors to Excel",
-        "operationId": "Vendor_ExportToExcel",
-        "responses": {
-          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
-        }
-      }
-    },
-    "/api/Vendor/ImportFromExcel": {
-      "post": {
-        "tags": ["Vendor"],
-        "summary": "Import vendors from Excel",
-        "operationId": "Vendor_ImportFromExcel",
-        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
-        "responses": { "200": { "description": "Import result" } }
-      }
-    },
     "/api/Product/GetById": {
       "get": {
         "tags": ["Product"],
@@ -163,29 +135,6 @@
         "responses": { "200": { "description": "Product created/updated" } }
       }
     },
-    "/api/Product/DeleteBatch": {
-      "post": {
-        "tags": ["Product"],
-        "summary": "Delete multiple products",
-        "operationId": "Product_DeleteBatch",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Products deleted successfully" } }
-      }
-    },
-    "/api/Product/AddOrUpdateComponent": {
-      "get": {
-        "tags": ["Product"],
-        "summary": "Add or update BOM component",
-        "operationId": "Product_AddOrUpdateComponent",
-        "parameters": [
-          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Parent product ID" },
-          { "name": "componentId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Component product ID" },
-          { "name": "quantity", "in": "query", "required": true, "schema": { "type": "number" }, "description": "Component quantity" },
-          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
-        ],
-        "responses": { "200": { "description": "Component added/updated" } }
-      }
-    },
     "/api/Product/RemoveComponent": {
       "get": {
         "tags": ["Product"],
@@ -196,31 +145,6 @@
           { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
         ],
         "responses": { "200": { "description": "Component removed" } }
-      }
-    },
-    "/api/Product/AddOrUpdatePacksize": {
-      "post": {
-        "tags": ["Product"],
-        "summary": "Add or update product packsize",
-        "operationId": "Product_AddOrUpdatePacksize",
-        "parameters": [
-          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" },
-          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
-        "responses": { "200": { "description": "Packsize added/updated" } }
-      }
-    },
-    "/api/Product/RemovePacksize": {
-      "get": {
-        "tags": ["Product"],
-        "summary": "Remove product packsize",
-        "operationId": "Product_RemovePacksize",
-        "parameters": [
-          { "name": "packsizeId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Packsize ID" },
-          { "name": "p4wSync", "in": "query", "schema": { "type": "boolean" }, "description": "Sync with P4W" }
-        ],
-        "responses": { "200": { "description": "Packsize removed" } }
       }
     },
     "/api/Product/ProductImages": {
@@ -257,36 +181,6 @@
         "responses": { "200": { "description": "Image deleted" } }
       }
     },
-    "/api/Product/ExportToExcel": {
-      "get": {
-        "tags": ["Product"],
-        "summary": "Export products to Excel",
-        "operationId": "Product_ExportToExcel",
-        "responses": {
-          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
-        }
-      }
-    },
-    "/api/Product/ImportFromExcel": {
-      "post": {
-        "tags": ["Product"],
-        "summary": "Import products from Excel",
-        "operationId": "Product_ImportFromExcel",
-        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
-        "responses": { "200": { "description": "Import result" } }
-      }
-    },
-    "/api/Product/SynchronizeProduct": {
-      "get": {
-        "tags": ["Product"],
-        "summary": "Synchronize product with P4W",
-        "operationId": "Product_SynchronizeProduct",
-        "parameters": [
-          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
-        ],
-        "responses": { "200": { "description": "Product synchronized" } }
-      }
-    },
     "/api/Product/Discontinue": {
       "get": {
         "tags": ["Product"],
@@ -320,15 +214,6 @@
         "responses": { "200": { "description": "Warehouse created/updated" } }
       }
     },
-    "/api/Warehouse/DeleteBatch": {
-      "post": {
-        "tags": ["Warehouse"],
-        "summary": "Delete multiple warehouses",
-        "operationId": "Warehouse_DeleteBatch",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Warehouses deleted successfully" } }
-      }
-    },
     "/api/Account/GetById": {
       "get": {
         "tags": ["Account"],
@@ -360,33 +245,6 @@
         "responses": { "200": { "description": "Accounts deleted successfully" } }
       }
     },
-    "/api/Account/ExportToExcel": {
-      "get": {
-        "tags": ["Account"],
-        "summary": "Export accounts to Excel",
-        "operationId": "Account_ExportToExcel",
-        "responses": {
-          "200": { "description": "Excel file", "content": { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { "schema": { "type": "string", "format": "binary" } } } }
-        }
-      }
-    },
-    "/api/Account/ImportFromExcel": {
-      "post": {
-        "tags": ["Account"],
-        "summary": "Import accounts from Excel",
-        "operationId": "Account_ImportFromExcel",
-        "requestBody": { "required": true, "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
-        "responses": { "200": { "description": "Import result" } }
-      }
-    },
-    "/api/Account/GetPrimingAccounts": {
-      "get": {
-        "tags": ["Account"],
-        "summary": "Get accounts available for priming",
-        "operationId": "Account_GetPrimingAccounts",
-        "responses": { "200": { "description": "List of priming accounts" } }
-      }
-    },
     "/api/SalesQuote/GetById": {
       "get": {
         "tags": ["SalesQuote"],
@@ -409,47 +267,6 @@
         "responses": { "200": { "description": "Sales quote created/updated" } }
       }
     },
-    "/api/SalesQuote/Clone": {
-      "get": {
-        "tags": ["SalesQuote"],
-        "summary": "Clone a sales quote",
-        "operationId": "SalesQuote_Clone",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID to clone" }
-        ],
-        "responses": { "200": { "description": "Cloned sales quote" } }
-      }
-    },
-    "/api/SalesQuote/Duplicate": {
-      "get": {
-        "tags": ["SalesQuote"],
-        "summary": "Duplicate quote for different customer",
-        "operationId": "SalesQuote_Duplicate",
-        "parameters": [
-          { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" },
-          { "name": "customerId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "New Customer ID" }
-        ],
-        "responses": { "200": { "description": "Duplicated sales quote" } }
-      }
-    },
-    "/api/SalesQuote/Lock": {
-      "post": {
-        "tags": ["SalesQuote"],
-        "summary": "Lock sales quotes to finalize",
-        "operationId": "SalesQuote_Lock",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Sales quotes locked" } }
-      }
-    },
-    "/api/SalesQuote/ToDraft": {
-      "post": {
-        "tags": ["SalesQuote"],
-        "summary": "Return locked quotes to draft status",
-        "operationId": "SalesQuote_ToDraft",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Sales quotes returned to draft" } }
-      }
-    },
     "/api/SalesQuote/GenerateSalesOrder": {
       "get": {
         "tags": ["SalesQuote"],
@@ -459,14 +276,6 @@
           { "name": "id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Sales Quote ID" }
         ],
         "responses": { "200": { "description": "Generated sales order ID" } }
-      }
-    },
-    "/api/SalesQuote/ApplyTotals": {
-      "get": {
-        "tags": ["SalesQuote"],
-        "summary": "Apply/recalculate totals on quotes",
-        "operationId": "SalesQuote_ApplyTotals",
-        "responses": { "200": { "description": "Totals recalculated" } }
       }
     },
     "/api/SalesOrder/GetById": {
