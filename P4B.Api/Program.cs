@@ -60,44 +60,70 @@ app.UseSwaggerUI(options =>
     options.ConfigObject.AdditionalItems["tryItOutEnabled"] = true;
     options.ConfigObject.AdditionalItems["requestSnippetsEnabled"] = true;
 
-    // Custom branding with 2-column header layout
+    // Custom branding - P4 Software colors (Blue & Orange)
     options.HeadContent = @"
-        <link rel=""icon"" type=""image/svg+xml"" href=""data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📚%3C/text%3E%3C/svg%3E"">
+        <link rel=""icon"" type=""image/svg+xml"" href=""data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232563EB'/%3E%3Cstop offset='100%25' stop-color='%23F59E0B'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g1)'/%3E%3Ctext x='50' y='65' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'%3EP4%3C/text%3E%3C/svg%3E"">
         <style>
-            .swagger-ui .topbar { background-color: #1a365d; padding: 10px 0; }
+            :root {
+                --p4-blue: #2563EB;
+                --p4-blue-light: #60A5FA;
+                --p4-blue-dark: #1E40AF;
+                --p4-orange: #F59E0B;
+                --p4-orange-light: #FBBF24;
+                --p4-orange-dark: #D97706;
+            }
+            /* Top bar with gradient matching logo */
+            .swagger-ui .topbar {
+                background: linear-gradient(135deg, var(--p4-blue) 0%, var(--p4-blue-dark) 50%, var(--p4-orange) 100%);
+                padding: 12px 0;
+            }
             .swagger-ui .topbar .download-url-wrapper .select-label { color: #fff; }
-            .swagger-ui .topbar-wrapper img { content: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 40%22%3E%3Ctext x=%2210%22 y=%2228%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22 font-weight=%22bold%22%3EP4Books API%3C/text%3E%3C/svg%3E'); height: 40px; }
+            .swagger-ui .topbar-wrapper img {
+                content: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 280 50%22%3E%3Cdefs%3E%3ClinearGradient id=%22wave%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%220%25%22%3E%3Cstop offset=%220%25%22 stop-color=%22%2360A5FA%22/%3E%3Cstop offset=%2250%25%22 stop-color=%22%232563EB%22/%3E%3Cstop offset=%22100%25%22 stop-color=%22%23F59E0B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x=%225%22 y=%2235%22 font-family=%22Arial%22 font-size=%2228%22 font-weight=%22bold%22 fill=%22white%22%3EP4%3C/text%3E%3Ctext x=%2245%22 y=%2235%22 font-family=%22Arial%22 font-size=%2228%22 fill=%22white%22%3ESOFTWARE%3C/text%3E%3Ctext x=%22185%22 y=%2235%22 font-family=%22Arial%22 font-size=%2220%22 fill=%22%23FBBF24%22%3EAPI%3C/text%3E%3C/svg%3E');
+                height: 50px;
+            }
+            /* 2-Column Header Layout */
             .swagger-ui .info { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
             .swagger-ui .info hgroup { grid-column: 1; }
-            .swagger-ui .info .description { grid-column: 2; grid-row: 1 / 3; border-left: 3px solid #3182ce; padding-left: 20px; margin: 0; }
+            .swagger-ui .info .description { grid-column: 2; grid-row: 1 / 3; border-left: 3px solid var(--p4-orange); padding-left: 20px; margin: 0; }
             .swagger-ui .info .base-url, .swagger-ui .info .link { grid-column: 1; }
-            .swagger-ui .info .title { color: #1a365d; font-size: 2.2em; margin-bottom: 10px; }
-            .swagger-ui .info .title small.version-stamp { background-color: #3182ce; }
+            .swagger-ui .info .title { color: var(--p4-blue-dark); font-size: 2.2em; margin-bottom: 10px; }
+            .swagger-ui .info .title small.version-stamp { background-color: var(--p4-orange); }
             .swagger-ui .info .description .markdown p { line-height: 1.6; }
-            .swagger-ui .info .description .markdown h3 { color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 15px; }
+            .swagger-ui .info .description .markdown h3 { color: var(--p4-blue-dark); border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 15px; }
             .swagger-ui .info .description .markdown ul { padding-left: 20px; }
-            .swagger-ui .info .description .markdown code { background: #edf2f7; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
-            @media (max-width: 1200px) { .swagger-ui .info { grid-template-columns: 1fr; } .swagger-ui .info .description { grid-column: 1; grid-row: auto; border-left: none; border-top: 3px solid #3182ce; padding-left: 0; padding-top: 20px; margin-top: 20px; } }
+            .swagger-ui .info .description .markdown code { background: #FEF3C7; color: var(--p4-orange-dark); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+            @media (max-width: 1200px) { .swagger-ui .info { grid-template-columns: 1fr; } .swagger-ui .info .description { grid-column: 1; grid-row: auto; border-left: none; border-top: 3px solid var(--p4-orange); padding-left: 0; padding-top: 20px; margin-top: 20px; } }
+            /* Operation blocks */
             .swagger-ui .opblock { border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-            .swagger-ui .opblock.opblock-post { border-color: #49cc90; background: rgba(73, 204, 144, 0.1); }
-            .swagger-ui .opblock.opblock-get { border-color: #61affe; background: rgba(97, 175, 254, 0.1); }
-            .swagger-ui .opblock.opblock-put { border-color: #fca130; background: rgba(252, 161, 48, 0.1); }
-            .swagger-ui .opblock.opblock-delete { border-color: #f93e3e; background: rgba(249, 62, 62, 0.1); }
-            .swagger-ui .opblock.opblock-patch { border-color: #50e3c2; background: rgba(80, 227, 194, 0.1); }
+            .swagger-ui .opblock.opblock-post { border-color: #10B981; background: rgba(16, 185, 129, 0.1); }
+            .swagger-ui .opblock.opblock-get { border-color: var(--p4-blue); background: rgba(37, 99, 235, 0.1); }
+            .swagger-ui .opblock.opblock-put { border-color: var(--p4-orange); background: rgba(245, 158, 11, 0.1); }
+            .swagger-ui .opblock.opblock-delete { border-color: #EF4444; background: rgba(239, 68, 68, 0.1); }
+            .swagger-ui .opblock.opblock-patch { border-color: #8B5CF6; background: rgba(139, 92, 246, 0.1); }
             .swagger-ui .opblock .opblock-summary { padding: 10px 15px; }
             .swagger-ui .opblock .opblock-summary-method { border-radius: 4px; font-weight: 600; }
-            .swagger-ui .opblock-tag { font-size: 1.3em; border-bottom: 2px solid #1a365d; padding-bottom: 10px; margin-bottom: 15px; }
-            .swagger-ui .opblock-tag:hover { background: rgba(26, 54, 93, 0.05); }
-            .swagger-ui .btn.authorize { background-color: #3182ce; border-color: #3182ce; border-radius: 4px; }
+            /* Tag sections */
+            .swagger-ui .opblock-tag { font-size: 1.3em; border-bottom: 2px solid var(--p4-blue); padding-bottom: 10px; margin-bottom: 15px; }
+            .swagger-ui .opblock-tag:hover { background: rgba(37, 99, 235, 0.05); }
+            /* Authorize button - Orange accent */
+            .swagger-ui .btn.authorize { background-color: var(--p4-orange); border-color: var(--p4-orange); border-radius: 4px; }
             .swagger-ui .btn.authorize svg { fill: #fff; }
-            .swagger-ui .btn.authorize:hover { background-color: #2c5282; }
-            .swagger-ui .btn.execute { background-color: #3182ce; border-radius: 4px; }
-            .swagger-ui .btn.execute:hover { background-color: #2c5282; }
+            .swagger-ui .btn.authorize:hover { background-color: var(--p4-orange-dark); }
+            /* Execute button - Blue */
+            .swagger-ui .btn.execute { background-color: var(--p4-blue); border-radius: 4px; }
+            .swagger-ui .btn.execute:hover { background-color: var(--p4-blue-dark); }
+            /* Cancel button */
+            .swagger-ui .btn.cancel { border-color: var(--p4-orange); color: var(--p4-orange); }
+            /* Models section */
             .swagger-ui section.models { border-radius: 8px; }
             .swagger-ui section.models .model-container { background: #f8fafc; border-radius: 4px; }
             .swagger-ui .responses-wrapper { border-radius: 8px; }
             .swagger-ui .response { border-radius: 4px; }
             .swagger-ui .loading-container { padding: 40px; }
+            /* Links */
+            .swagger-ui a { color: var(--p4-blue); }
+            .swagger-ui a:hover { color: var(--p4-blue-dark); }
         </style>";
 });
 
