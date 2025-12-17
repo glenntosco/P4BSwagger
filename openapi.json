@@ -3,36 +3,20 @@
   "info": {
     "title": "P4Books ERP API",
     "version": "1.0.0",
-    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive multi-tenant ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Multi-Tenancy\nThis API uses subdomain-based multi-tenancy. Each tenant has their own database.\n- Production: `{tenant}.p4books.cloud`\n- Testing: `{tenant}.p4books.local`\n\n### Authentication\nThe API supports two authentication methods:\n1. **API Key**: Use the `ApiKey` header with your API key\n2. **Session Token**: Use the `AuthenticationToken` header with an encrypted session token\n\n### Tenant Selection\nUse the `X-Tenant-Alias` header to specify which tenant database to connect to.",
-    "contact": {
-      "name": "P4Books Support",
-      "email": "support@p4books.cloud",
-      "url": "https://p4books.cloud"
-    },
-    "license": {
-      "name": "Proprietary",
-      "url": "https://p4books.cloud/license"
-    }
+    "description": "## P4Books ERP System API Documentation\n\nP4Books is a comprehensive ERP system providing:\n- **Sales & Purchasing**: Quotes, Orders, Invoices, Bills\n- **Inventory Management**: Receipts, Deliveries, Stock Control\n- **Financial Accounting**: GL, Chart of Accounts, Posting Periods\n- **Master Data**: Products, Customers, Vendors, Warehouses\n- **Reporting**: Stimulsoft-based custom reports\n\n### Authentication\nUse the `ApiKey` header with your API key. The API key determines your tenant access.",
   },
   "servers": [
     {
-      "url": "https://{tenant}.p4books.cloud",
-      "description": "Production Server",
-      "variables": {
-        "tenant": { "default": "demo", "description": "Tenant alias" }
-      }
+      "url": "https://api.p4books.cloud",
+      "description": "Production API Server"
     },
     {
-      "url": "https://{tenant}.p4books.local",
-      "description": "Local Testing Server",
-      "variables": {
-        "tenant": { "default": "demo", "description": "Tenant alias" }
-      }
+      "url": "https://api.p4books.local",
+      "description": "Local Development Server"
     }
   ],
   "security": [
-    { "ApiKey": [] },
-    { "AuthenticationToken": [] }
+    { "ApiKey": [] }
   ],
   "tags": [
     { "name": "Customer", "description": "Customer master data" },
@@ -758,13 +742,7 @@
         "type": "apiKey",
         "name": "ApiKey",
         "in": "header",
-        "description": "API Key authentication. Enter your API key."
-      },
-      "AuthenticationToken": {
-        "type": "apiKey",
-        "name": "AuthenticationToken",
-        "in": "header",
-        "description": "Session token obtained from login. Encrypted JSON token."
+        "description": "API Key for authentication. Your API key determines tenant access."
       }
     },
     "schemas": {
