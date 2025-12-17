@@ -56,15 +56,6 @@
         "responses": { "200": { "description": "Customer created/updated successfully" } }
       }
     },
-    "/api/Customer/DeleteBatch": {
-      "post": {
-        "tags": ["Customer"],
-        "summary": "Delete multiple customers",
-        "operationId": "Customer_DeleteBatch",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } },
-        "responses": { "200": { "description": "Customers deleted successfully" } }
-      }
-    },
     "/api/Customer/VerifyTaxId": {
       "get": {
         "tags": ["Customer"],
