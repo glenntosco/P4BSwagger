@@ -11,8 +11,8 @@
       "description": "Tenant API Server",
       "variables": {
         "tenant": {
-          "default": "app",
-          "description": "Your tenant alias (e.g., barrdega, demo). Use 'app' only for SuperUser authentication."
+          "default": "test93",
+          "description": "Your tenant alias (e.g., test93, barrdega). Use 'app' only for SuperUser authentication."
         }
       }
     },
@@ -21,8 +21,8 @@
       "description": "Tenant API Server (alternate domain)",
       "variables": {
         "tenant": {
-          "default": "barrdega",
-          "description": "Your tenant alias (e.g., barrdega, demo)"
+          "default": "test93",
+          "description": "Your tenant alias (e.g., test93, barrdega)"
         }
       }
     }
