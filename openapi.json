@@ -67,18 +67,6 @@
         "responses": { "200": { "description": "Tax ID verification result" } }
       }
     },
-    "/api/Customer/VerifyTaxIdByCode": {
-      "get": {
-        "tags": ["Customer"],
-        "summary": "Verify tax ID by code",
-        "operationId": "Customer_VerifyTaxIdByCode",
-        "parameters": [
-          { "name": "code", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Tax ID code" },
-          { "name": "customerType", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Customer type" }
-        ],
-        "responses": { "200": { "description": "Tax ID verification result" } }
-      }
-    },
     "/api/Customer/ExportToExcel": {
       "get": {
         "tags": ["Customer"],
