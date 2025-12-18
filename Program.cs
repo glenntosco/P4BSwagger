@@ -319,13 +319,177 @@ app.Map("/api/{**path}", async (HttpContext context, IHttpClientFactory httpClie
     }
 }).ExcludeFromDescription();
 
-// Health check endpoint
-app.MapGet("/health", () => Results.Ok(new {
-    status = "healthy",
-    timestamp = DateTime.UtcNow,
-    version = "1.0.1",
-    service = "P4Books API Documentation"
-})).WithTags("System").WithName("HealthCheck");
+// Health check endpoint - pretty HTML page
+app.MapGet("/health", (HttpContext context) =>
+{
+    var uptime = DateTime.UtcNow;
+    var html = $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>P4Books API - Health Status</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #F59E0B 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }}
+        .card {{
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }}
+        .logo {{
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #2563EB 0%, #F59E0B 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }}
+        h1 {{
+            color: #1E40AF;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }}
+        .status {{
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10B981;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 20px 0;
+        }}
+        .status::before {{
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }}
+        @keyframes pulse {{
+            0%, 100% {{ opacity: 1; }}
+            50% {{ opacity: 0.5; }}
+        }}
+        .info {{
+            margin-top: 30px;
+            text-align: left;
+        }}
+        .info-row {{
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }}
+        .info-row:last-child {{
+            border-bottom: none;
+        }}
+        .info-label {{
+            color: #6B7280;
+            font-size: 14px;
+        }}
+        .info-value {{
+            color: #1F2937;
+            font-weight: 600;
+            font-size: 14px;
+        }}
+        .links {{
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }}
+        .links a {{
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }}
+        .links a.primary {{
+            background: #2563EB;
+            color: white;
+        }}
+        .links a.primary:hover {{
+            background: #1E40AF;
+        }}
+        .links a.secondary {{
+            background: #F3F4F6;
+            color: #374151;
+        }}
+        .links a.secondary:hover {{
+            background: #E5E7EB;
+        }}
+        .footer {{
+            margin-top: 30px;
+            color: #9CA3AF;
+            font-size: 12px;
+        }}
+    </style>
+</head>
+<body>
+    <div class=""card"">
+        <div class=""logo"">P4</div>
+        <h1>P4Books API</h1>
+        <p style=""color: #6B7280;"">Documentation Server</p>
+
+        <div class=""status"">Healthy</div>
+
+        <div class=""info"">
+            <div class=""info-row"">
+                <span class=""info-label"">Version</span>
+                <span class=""info-value"">1.0.1</span>
+            </div>
+            <div class=""info-row"">
+                <span class=""info-label"">Environment</span>
+                <span class=""info-value"">Production</span>
+            </div>
+            <div class=""info-row"">
+                <span class=""info-label"">Server Time</span>
+                <span class=""info-value"">{uptime:yyyy-MM-dd HH:mm:ss} UTC</span>
+            </div>
+            <div class=""info-row"">
+                <span class=""info-label"">OpenAPI</span>
+                <span class=""info-value"">3.0.3</span>
+            </div>
+        </div>
+
+        <div class=""links"">
+            <a href=""/"" class=""primary"">API Documentation</a>
+            <a href=""/openapi.json"" class=""secondary"">OpenAPI Spec</a>
+        </div>
+
+        <div class=""footer"">
+            &copy; {DateTime.UtcNow.Year} P4 Software. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>";
+
+    context.Response.ContentType = "text/html";
+    return Results.Content(html, "text/html");
+}).ExcludeFromDescription();
 
 // API version endpoint
 app.MapGet("/version", () => Results.Ok(new {
