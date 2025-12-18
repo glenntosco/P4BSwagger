@@ -147,6 +147,14 @@ app.UseSwaggerUI(options =>
                 content: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 280 50%22%3E%3Cdefs%3E%3ClinearGradient id=%22wave%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%220%25%22%3E%3Cstop offset=%220%25%22 stop-color=%22%2360A5FA%22/%3E%3Cstop offset=%2250%25%22 stop-color=%22%232563EB%22/%3E%3Cstop offset=%22100%25%22 stop-color=%22%23F59E0B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x=%225%22 y=%2235%22 font-family=%22Arial%22 font-size=%2228%22 font-weight=%22bold%22 fill=%22white%22%3EP4%3C/text%3E%3Ctext x=%2245%22 y=%2235%22 font-family=%22Arial%22 font-size=%2228%22 fill=%22white%22%3ESOFTWARE%3C/text%3E%3Ctext x=%22185%22 y=%2235%22 font-family=%22Arial%22 font-size=%2220%22 fill=%22%23FBBF24%22%3EAPI%3C/text%3E%3C/svg%3E');
                 height: 50px;
             }
+            /* Main page logo above title */
+            .swagger-ui .info .p4-main-logo {
+                width: 280px;
+                max-width: 100%;
+                height: auto;
+                margin-bottom: 20px;
+                display: block;
+            }
             /* 2-Column Header Layout */
             .swagger-ui .info { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
             .swagger-ui .info hgroup { grid-column: 1; }
@@ -198,6 +206,36 @@ app.UseSwaggerUI(options =>
             .swagger-ui .scheme-container > .servers { display: none !important; }
         </style>
         <script>
+            // Inject P4 Software logo above the API title
+            (function() {
+                function injectLogo() {
+                    var infoSection = document.querySelector('.swagger-ui .info');
+                    var title = document.querySelector('.swagger-ui .info .title');
+                    if (infoSection && title && !document.querySelector('.p4-main-logo')) {
+                        var logo = document.createElement('img');
+                        logo.src = '/logo.png';
+                        logo.alt = 'P4 Software';
+                        logo.className = 'p4-main-logo';
+                        title.parentNode.insertBefore(logo, title);
+                    }
+                }
+                // Try immediately and also watch for DOM changes
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(injectLogo, 100);
+                    });
+                } else {
+                    setTimeout(injectLogo, 100);
+                }
+                // Also use MutationObserver to catch when Swagger UI renders
+                var observer = new MutationObserver(function(mutations) {
+                    injectLogo();
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+                // Stop observing after 5 seconds
+                setTimeout(function() { observer.disconnect(); }, 5000);
+            })();
+
             // Session timeout - logout after 10 minutes of inactivity
             (function() {
                 const TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
