@@ -17,8 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 // Add HttpClient for API proxying
 builder.Services.AddHttpClient("P4BooksApi", client =>
 {
-    // Backend URL from environment variable or default
-    var backendUrl = builder.Configuration["BackendUrl"] ?? "https://test93.p4books.cloud";
+    // Backend URL - use Azure internal URL for reliability
+    var backendUrl = builder.Configuration["BackendUrl"] ?? "https://p4books.azurewebsites.net";
     client.BaseAddress = new Uri(backendUrl);
     client.Timeout = TimeSpan.FromMinutes(5);
 });
@@ -188,6 +188,9 @@ app.Map("/api/{**path}", async (HttpContext context, IHttpClientFactory httpClie
             requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
         }
     }
+
+    // Add X-Tenant-Alias header so backend uses API key lookup
+    requestMessage.Headers.TryAddWithoutValidation("X-Tenant-Alias", "api");
 
     // Copy request body for POST/PUT/PATCH
     if (context.Request.ContentLength > 0 || context.Request.Headers.ContainsKey("Transfer-Encoding"))
