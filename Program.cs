@@ -80,6 +80,9 @@ var app = builder.Build();
 
 app.UseCors("AllowAll");
 
+// Serve static files from wwwroot (logo, etc.)
+app.UseStaticFiles();
+
 // Enable routing
 app.UseRouting();
 
@@ -351,17 +354,11 @@ app.MapGet("/health", (HttpContext context) =>
             text-align: center;
         }}
         .logo {{
-            width: 80px;
-            height: 80px;
+            width: 200px;
+            max-width: 100%;
+            height: auto;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #2563EB 0%, #F59E0B 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
+            display: block;
         }}
         h1 {{
             color: #1E40AF;
@@ -450,7 +447,7 @@ app.MapGet("/health", (HttpContext context) =>
 </head>
 <body>
     <div class=""card"">
-        <div class=""logo"">P4</div>
+        <img src=""/logo.png"" alt=""P4 Software"" class=""logo"">
         <h1>P4Books API</h1>
         <p style=""color: #6B7280;"">Documentation Server</p>
 
@@ -525,17 +522,11 @@ app.MapGet("/version", (HttpContext context) =>
             margin-bottom: 30px;
         }}
         .logo {{
-            width: 80px;
-            height: 80px;
+            width: 200px;
+            max-width: 100%;
+            height: auto;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #2563EB 0%, #F59E0B 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
+            display: block;
         }}
         h1 {{
             color: #1E40AF;
@@ -669,7 +660,7 @@ app.MapGet("/version", (HttpContext context) =>
 <body>
     <div class=""card"">
         <div class=""header"">
-            <div class=""logo"">P4</div>
+            <img src=""/logo.png"" alt=""P4 Software"" class=""logo"">
             <h1>P4Books ERP API</h1>
             <p class=""subtitle"">Enterprise Resource Planning System</p>
             <div class=""version-badge"">v1.0.1</div>
