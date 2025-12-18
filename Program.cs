@@ -242,8 +242,8 @@ app.Map("/api/{**path}", async (HttpContext context, IHttpClientFactory httpClie
         }
     }
 
-    // Add X-Tenant-Alias header so backend uses API key lookup
-    requestMessage.Headers.TryAddWithoutValidation("X-Tenant-Alias", "api");
+    // Add X-Tenant-Alias header - use test93 until backend "api" alias lookup is deployed
+    requestMessage.Headers.TryAddWithoutValidation("X-Tenant-Alias", "test93");
 
     // Copy request body for POST/PUT/PATCH
     if (context.Request.ContentLength > 0 || context.Request.Headers.ContainsKey("Transfer-Encoding"))
