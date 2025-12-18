@@ -14,13 +14,66 @@ builder.Services.AddCors(options =>
 // Add endpoint routing for minimal APIs
 builder.Services.AddEndpointsApiExplorer();
 
-// Add HttpClient for API proxying
+// Add HttpClient for API proxying with custom DNS resolution
 builder.Services.AddHttpClient("P4BooksApi", client =>
 {
     // Backend URL - app.p4books.cloud is the main API server
     var backendUrl = builder.Configuration["BackendUrl"] ?? "https://app.p4books.cloud";
     client.BaseAddress = new Uri(backendUrl);
     client.Timeout = TimeSpan.FromMinutes(5);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new SocketsHttpHandler
+    {
+        // Use custom DNS callback to resolve using Google DNS
+        ConnectCallback = async (context, cancellationToken) =>
+        {
+            // Resolve DNS using system resolver (which should work)
+            // If p4books.cloud domains fail, use hardcoded IP
+            string host = context.DnsEndPoint.Host;
+            int port = context.DnsEndPoint.Port;
+
+            System.Net.IPAddress? ipAddress = null;
+
+            // Try to resolve the host
+            try
+            {
+                var addresses = await System.Net.Dns.GetHostAddressesAsync(host, cancellationToken);
+                if (addresses.Length > 0)
+                {
+                    ipAddress = addresses[0];
+                }
+            }
+            catch
+            {
+                // If DNS resolution fails for p4books.cloud domains, use known IP
+                if (host.EndsWith("p4books.cloud", StringComparison.OrdinalIgnoreCase))
+                {
+                    ipAddress = System.Net.IPAddress.Parse("20.9.134.138");
+                }
+            }
+
+            if (ipAddress == null)
+            {
+                throw new Exception($"Could not resolve host: {host}");
+            }
+
+            var socket = new System.Net.Sockets.Socket(System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
+            socket.NoDelay = true;
+
+            try
+            {
+                await socket.ConnectAsync(new System.Net.IPEndPoint(ipAddress, port), cancellationToken);
+                return new System.Net.Sockets.NetworkStream(socket, ownsSocket: true);
+            }
+            catch
+            {
+                socket.Dispose();
+                throw;
+            }
+        }
+    };
+    return handler;
 });
 
 var app = builder.Build();
