@@ -323,20 +323,20 @@ app.Map("/api/{**path}", async (HttpContext context, IHttpClientFactory httpClie
 app.MapGet("/health", () => Results.Ok(new {
     status = "healthy",
     timestamp = DateTime.UtcNow,
-    version = "10.0.1",
+    version = "1.0.1",
     service = "P4Books API Documentation"
 })).WithTags("System").WithName("HealthCheck");
 
 // API version endpoint
 app.MapGet("/version", () => Results.Ok(new {
     api = "P4Books ERP",
-    version = "1.0.0",
+    version = "1.0.1",
     openapi = "3.0.3",
     swashbuckle = "10.0.1"
 })).WithTags("System").WithName("GetVersion");
 
 Console.WriteLine("P4Books API Documentation Server starting...");
-Console.WriteLine("Swashbuckle.AspNetCore v10.0.1 - OpenAPI 3.1 Support");
+Console.WriteLine("P4Books API v1.0.1 - Production Build");
 Console.WriteLine("Access Swagger UI at: http://localhost:5000 or https://api.p4books.cloud");
 
 app.Run();
