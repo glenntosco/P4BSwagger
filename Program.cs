@@ -17,8 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 // Add HttpClient for API proxying
 builder.Services.AddHttpClient("P4BooksApi", client =>
 {
-    // Backend URL - p4books.cloud is the main domain
-    var backendUrl = builder.Configuration["BackendUrl"] ?? "https://p4books.cloud";
+    // Backend URL - app.p4books.cloud is the main API server
+    var backendUrl = builder.Configuration["BackendUrl"] ?? "https://app.p4books.cloud";
     client.BaseAddress = new Uri(backendUrl);
     client.Timeout = TimeSpan.FromMinutes(5);
 });
