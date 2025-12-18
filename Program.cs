@@ -128,7 +128,7 @@ app.UseSwaggerUI(options =>
             .swagger-ui .servers { display: none !important; }
             .swagger-ui .servers-title { display: none !important; }
             .swagger-ui .scheme-container .servers { display: none !important; }
-            .swagger-ui label[for="servers"] { display: none !important; }
+            .swagger-ui label[for=""servers""] { display: none !important; }
             .swagger-ui .scheme-container > label:first-child { display: none !important; }
             .swagger-ui .scheme-container > .servers { display: none !important; }
         </style>";
