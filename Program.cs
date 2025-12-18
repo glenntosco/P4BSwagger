@@ -124,12 +124,13 @@ app.UseSwaggerUI(options =>
             /* Links */
             .swagger-ui a { color: var(--p4-blue); }
             .swagger-ui a:hover { color: var(--p4-blue-dark); }
-            /* Hide Servers section - tenant is determined by API key */
-            .swagger-ui .scheme-container { display: none !important; }
+            /* Hide Servers section only - keep Authorize button visible */
             .swagger-ui .servers { display: none !important; }
             .swagger-ui .servers-title { display: none !important; }
-            .swagger-ui select[aria-label*='Server'] { display: none !important; }
-            .swagger-ui .global-server-container { display: none !important; }
+            .swagger-ui .scheme-container .servers { display: none !important; }
+            .swagger-ui label[for="servers"] { display: none !important; }
+            .swagger-ui .scheme-container > label:first-child { display: none !important; }
+            .swagger-ui .scheme-container > .servers { display: none !important; }
         </style>";
 });
 
