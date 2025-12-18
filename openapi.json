@@ -66,16 +66,6 @@
         "responses": { "200": { "description": "Tax ID verification result" } }
       }
     },
-    "/api/Customer/GetOverdue": {
-      "post": {
-        "tags": ["Customer"],
-        "summary": "Get overdue customer IDs",
-        "operationId": "Customer_GetOverdue",
-        "responses": {
-          "200": { "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string", "format": "uuid" } } } } }
-        }
-      }
-    },
     "/api/Vendor/GetById": {
       "get": {
         "tags": ["Vendor"],

@@ -14,6 +14,15 @@ builder.Services.AddCors(options =>
 // Add endpoint routing for minimal APIs
 builder.Services.AddEndpointsApiExplorer();
 
+// Add HttpClient for API proxying
+builder.Services.AddHttpClient("P4BooksApi", client =>
+{
+    // Backend URL from environment variable or default
+    var backendUrl = builder.Configuration["BackendUrl"] ?? "https://test93.p4books.cloud";
+    client.BaseAddress = new Uri(backendUrl);
+    client.Timeout = TimeSpan.FromMinutes(5);
+});
+
 var app = builder.Build();
 
 app.UseCors("AllowAll");
@@ -153,6 +162,72 @@ app.MapGet("/openapi.json", async context =>
 
 // Redirect root to Swagger UI
 app.MapGet("/", () => Results.Redirect("/index.html")).ExcludeFromDescription();
+
+// Proxy all /api/* requests to the P4Books backend
+app.Map("/api/{**path}", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient("P4BooksApi");
+
+    // Build the target URL
+    var path = context.Request.Path.Value;
+    var query = context.Request.QueryString.Value;
+    var targetUrl = $"{path}{query}";
+
+    // Create the proxy request
+    var requestMessage = new HttpRequestMessage
+    {
+        Method = new HttpMethod(context.Request.Method),
+        RequestUri = new Uri(targetUrl, UriKind.Relative)
+    };
+
+    // Copy headers (except Host)
+    foreach (var header in context.Request.Headers)
+    {
+        if (!header.Key.Equals("Host", StringComparison.OrdinalIgnoreCase))
+        {
+            requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+        }
+    }
+
+    // Copy request body for POST/PUT/PATCH
+    if (context.Request.ContentLength > 0 || context.Request.Headers.ContainsKey("Transfer-Encoding"))
+    {
+        requestMessage.Content = new StreamContent(context.Request.Body);
+        if (context.Request.ContentType != null)
+        {
+            requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType);
+        }
+    }
+
+    try
+    {
+        var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
+
+        // Copy response status
+        context.Response.StatusCode = (int)response.StatusCode;
+
+        // Copy response headers
+        foreach (var header in response.Headers)
+        {
+            context.Response.Headers[header.Key] = header.Value.ToArray();
+        }
+        foreach (var header in response.Content.Headers)
+        {
+            context.Response.Headers[header.Key] = header.Value.ToArray();
+        }
+
+        // Remove transfer-encoding if present (Kestrel handles this)
+        context.Response.Headers.Remove("transfer-encoding");
+
+        // Copy response body
+        await response.Content.CopyToAsync(context.Response.Body);
+    }
+    catch (HttpRequestException ex)
+    {
+        context.Response.StatusCode = 502;
+        await context.Response.WriteAsJsonAsync(new { error = "Backend unavailable", message = ex.Message });
+    }
+}).ExcludeFromDescription();
 
 // Health check endpoint
 app.MapGet("/health", () => Results.Ok(new {
