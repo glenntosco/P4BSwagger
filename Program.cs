@@ -491,13 +491,261 @@ app.MapGet("/health", (HttpContext context) =>
     return Results.Content(html, "text/html");
 }).ExcludeFromDescription();
 
-// API version endpoint
-app.MapGet("/version", () => Results.Ok(new {
-    api = "P4Books ERP",
-    version = "1.0.1",
-    openapi = "3.0.3",
-    swashbuckle = "10.0.1"
-})).WithTags("System").WithName("GetVersion");
+// API version endpoint - pretty HTML page
+app.MapGet("/version", (HttpContext context) =>
+{
+    var html = $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>P4Books API - Version Info</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #F59E0B 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }}
+        .card {{
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }}
+        .header {{
+            text-align: center;
+            margin-bottom: 30px;
+        }}
+        .logo {{
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #2563EB 0%, #F59E0B 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }}
+        h1 {{
+            color: #1E40AF;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }}
+        .subtitle {{
+            color: #6B7280;
+            font-size: 14px;
+        }}
+        .version-badge {{
+            display: inline-block;
+            background: linear-gradient(135deg, #2563EB 0%, #F59E0B 100%);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }}
+        .section {{
+            margin-top: 30px;
+        }}
+        .section-title {{
+            color: #1E40AF;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E5E7EB;
+        }}
+        .grid {{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }}
+        .grid-item {{
+            background: #F9FAFB;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2563EB;
+        }}
+        .grid-item.orange {{
+            border-left-color: #F59E0B;
+        }}
+        .grid-label {{
+            color: #6B7280;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }}
+        .grid-value {{
+            color: #1F2937;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 5px;
+        }}
+        .features {{
+            margin-top: 20px;
+        }}
+        .feature {{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }}
+        .feature:last-child {{
+            border-bottom: none;
+        }}
+        .feature-icon {{
+            width: 32px;
+            height: 32px;
+            background: #EFF6FF;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563EB;
+            font-size: 16px;
+        }}
+        .feature-text {{
+            flex: 1;
+        }}
+        .feature-title {{
+            color: #1F2937;
+            font-weight: 500;
+        }}
+        .feature-desc {{
+            color: #6B7280;
+            font-size: 12px;
+        }}
+        .links {{
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }}
+        .links a {{
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }}
+        .links a.primary {{
+            background: #2563EB;
+            color: white;
+        }}
+        .links a.primary:hover {{
+            background: #1E40AF;
+        }}
+        .links a.secondary {{
+            background: #F3F4F6;
+            color: #374151;
+        }}
+        .links a.secondary:hover {{
+            background: #E5E7EB;
+        }}
+        .footer {{
+            margin-top: 30px;
+            text-align: center;
+            color: #9CA3AF;
+            font-size: 12px;
+        }}
+    </style>
+</head>
+<body>
+    <div class=""card"">
+        <div class=""header"">
+            <div class=""logo"">P4</div>
+            <h1>P4Books ERP API</h1>
+            <p class=""subtitle"">Enterprise Resource Planning System</p>
+            <div class=""version-badge"">v1.0.1</div>
+        </div>
+
+        <div class=""section"">
+            <div class=""section-title"">Technical Specifications</div>
+            <div class=""grid"">
+                <div class=""grid-item"">
+                    <div class=""grid-label"">API Version</div>
+                    <div class=""grid-value"">1.0.1</div>
+                </div>
+                <div class=""grid-item orange"">
+                    <div class=""grid-label"">OpenAPI Spec</div>
+                    <div class=""grid-value"">3.0.3</div>
+                </div>
+                <div class=""grid-item"">
+                    <div class=""grid-label"">Swashbuckle</div>
+                    <div class=""grid-value"">10.0.1</div>
+                </div>
+                <div class=""grid-item orange"">
+                    <div class=""grid-label"">.NET Runtime</div>
+                    <div class=""grid-value"">10.0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class=""section"">
+            <div class=""section-title"">Available Modules</div>
+            <div class=""features"">
+                <div class=""feature"">
+                    <div class=""feature-icon"">📦</div>
+                    <div class=""feature-text"">
+                        <div class=""feature-title"">Inventory Management</div>
+                        <div class=""feature-desc"">Stock levels, warehouses, receipts, deliveries</div>
+                    </div>
+                </div>
+                <div class=""feature"">
+                    <div class=""feature-icon"">💰</div>
+                    <div class=""feature-text"">
+                        <div class=""feature-title"">Sales & Invoicing</div>
+                        <div class=""feature-desc"">Quotes, orders, invoices, customers</div>
+                    </div>
+                </div>
+                <div class=""feature"">
+                    <div class=""feature-icon"">🛒</div>
+                    <div class=""feature-text"">
+                        <div class=""feature-title"">Purchasing</div>
+                        <div class=""feature-desc"">Purchase orders, vendor bills, vendors</div>
+                    </div>
+                </div>
+                <div class=""feature"">
+                    <div class=""feature-icon"">📊</div>
+                    <div class=""feature-text"">
+                        <div class=""feature-title"">Accounting</div>
+                        <div class=""feature-desc"">Journal entries, chart of accounts, reports</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=""links"">
+            <a href=""/"" class=""primary"">API Documentation</a>
+            <a href=""/health"" class=""secondary"">Health Status</a>
+        </div>
+
+        <div class=""footer"">
+            &copy; {DateTime.UtcNow.Year} P4 Software. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>";
+
+    context.Response.ContentType = "text/html";
+    return Results.Content(html, "text/html");
+}).ExcludeFromDescription();
 
 Console.WriteLine("P4Books API Documentation Server starting...");
 Console.WriteLine("P4Books API v1.0.1 - Production Build");
