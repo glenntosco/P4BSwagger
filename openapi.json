@@ -28,7 +28,8 @@
     { "name": "VendorBill", "description": "Vendor bills" },
     { "name": "InventoryReceipt", "description": "Inventory receipts" },
     { "name": "JournalEntry", "description": "GL journal entries" },
-    { "name": "PrintReport", "description": "Report generation" }
+    { "name": "PrintReport", "description": "Report generation" },
+    { "name": "Inventory", "description": "Inventory levels and stock management" }
   ],
   "paths": {
     "/api/Customer/GetById": {
@@ -461,6 +462,79 @@
         ],
         "responses": { "200": { "description": "Report template data" } }
       }
+    },
+    "/api/Inventory/GetAll": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get all inventory locations with stock levels",
+        "operationId": "Inventory_GetAll",
+        "description": "Returns inventory levels for all products across all warehouses. Includes product details, warehouse information, and current stock quantities.",
+        "parameters": [
+          { "name": "warehouseId", "in": "query", "schema": { "type": "string", "format": "uuid" }, "description": "Filter by warehouse ID" },
+          { "name": "productId", "in": "query", "schema": { "type": "string", "format": "uuid" }, "description": "Filter by product ID" },
+          { "name": "sku", "in": "query", "schema": { "type": "string" }, "description": "Filter by product SKU (partial match)" },
+          { "name": "minQuantity", "in": "query", "schema": { "type": "number" }, "description": "Minimum quantity filter" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of inventory locations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InventoryLocation" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Inventory/GetByProduct": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get inventory levels for a specific product",
+        "operationId": "Inventory_GetByProduct",
+        "parameters": [
+          { "name": "productId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Product ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inventory locations for the product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InventoryLocation" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Inventory/GetByWarehouse": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get all inventory in a specific warehouse",
+        "operationId": "Inventory_GetByWarehouse",
+        "parameters": [
+          { "name": "warehouseId", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Warehouse ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "All inventory in the warehouse",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InventoryLocation" }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -480,6 +554,41 @@
           "DateCreated": { "type": "string", "format": "date-time" },
           "DateModified": { "type": "string", "format": "date-time" }
         }
+      },
+      "InventoryLocation": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EntityBase" },
+          {
+            "type": "object",
+            "properties": {
+              "ProductId": { "type": "string", "format": "uuid", "description": "Product ID" },
+              "WarehouseId": { "type": "string", "format": "uuid", "description": "Warehouse ID" },
+              "Quantity": { "type": "number", "description": "Current stock quantity" },
+              "Product": {
+                "type": "object",
+                "properties": {
+                  "Id": { "type": "string", "format": "uuid" },
+                  "Sku": { "type": "string", "description": "Product SKU" },
+                  "Upc": { "type": "string", "description": "Product UPC barcode" },
+                  "Description": { "type": "string", "description": "Product description" },
+                  "Category": { "type": "string", "description": "Product category" },
+                  "UnitOfMeasure": { "type": "string", "description": "Unit of measure (e.g., Ea, Box, Case)" },
+                  "Cost": { "type": "number", "description": "Unit cost" },
+                  "SalesPrice": { "type": "number", "description": "Sales price" },
+                  "CurrencyId": { "type": "string", "format": "uuid" }
+                }
+              },
+              "Warehouse": {
+                "type": "object",
+                "properties": {
+                  "Id": { "type": "string", "format": "uuid" },
+                  "Code": { "type": "string", "description": "Warehouse code" },
+                  "Name": { "type": "string", "description": "Warehouse name" }
+                }
+              }
+            }
+          }
+        ]
       },
       "Customer": {
         "allOf": [
