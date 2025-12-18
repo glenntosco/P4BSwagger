@@ -112,8 +112,8 @@ app.UseSwaggerUI(options =>
         Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Patch
     );
 
-    // Persist authorization tokens and syntax highlighting
-    options.ConfigObject.AdditionalItems["persistAuthorization"] = true;
+    // Do NOT persist authorization - clear on browser close
+    options.ConfigObject.AdditionalItems["persistAuthorization"] = false;
     options.ConfigObject.AdditionalItems["syntaxHighlight"] = new Dictionary<string, object>
     {
         ["activated"] = true,
@@ -193,7 +193,41 @@ app.UseSwaggerUI(options =>
             .swagger-ui label[for=""servers""] { display: none !important; }
             .swagger-ui .scheme-container > label:first-child { display: none !important; }
             .swagger-ui .scheme-container > .servers { display: none !important; }
-        </style>";
+        </style>
+        <script>
+            // Session timeout - logout after 10 minutes of inactivity
+            (function() {
+                const TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+                let timeoutId;
+
+                function clearAuth() {
+                    // Clear localStorage authorization
+                    localStorage.removeItem('authorized');
+                    // Clear sessionStorage
+                    sessionStorage.clear();
+                    // Reload page to reset Swagger UI state
+                    window.location.reload();
+                }
+
+                function resetTimer() {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(clearAuth, TIMEOUT_MS);
+                }
+
+                // Reset timer on user activity
+                ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(event) {
+                    document.addEventListener(event, resetTimer, true);
+                });
+
+                // Start the timer
+                resetTimer();
+
+                // Also clear auth on page unload (browser close/tab close)
+                window.addEventListener('beforeunload', function() {
+                    localStorage.removeItem('authorized');
+                });
+            })();
+        </script>";
 });
 
 // Serve the static OpenAPI spec file with caching headers
